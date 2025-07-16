@@ -5,6 +5,7 @@ import PostCard from "./PostCard";
 export default function Posting() {
   const [posts, setPosts] = useState([]);
 
+
   useEffect(() => {
     axios.get("http://localhost:5000/api/posts")
       .then(res => {
@@ -20,7 +21,7 @@ export default function Posting() {
     <div  style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px" }}>
       {posts.length > 0 ? (
         posts.map(post => (
-          <PostCard key={post._id} post={post} />
+          <PostCard key={post._id} post={post}  />
         ))
       ) : (
         <p>No posts available.</p>

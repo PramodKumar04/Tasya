@@ -30,7 +30,11 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
+<<<<<<< HEAD
          <Route path="/create" element={<AddNewPost />} />
+=======
+         
+>>>>>>> 1fa461d34d3b5687a04aa5b6e009c079d32b1b1e
       </Routes>
 
       {!hideNavAndFooter && <Footer />}
