@@ -56,11 +56,11 @@ export default function PostCard({ post, currentUserId }) {
             style={{
               background: "none",
               border: "none",
-              paddingRight: "8rem",
+              paddingRight: "5rem",
               margin: "0",
               cursor: "pointer",
               color: liked ? "red" : "gray",
-              fontSize: "16px",
+              fontSize: "15px",
             }}
           >
             <i
