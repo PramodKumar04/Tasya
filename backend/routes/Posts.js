@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const {postModel} = require("../models/Posts"); // ✅ use the model
+// const multer  = require('multer');
+
+// const {storage}= require("../cloudConfig.js");
+// const upload = multer({ storage});
 
 // GET all posts
 router.get("/posts", async (req, res) => {
@@ -12,7 +16,33 @@ router.get("/posts", async (req, res) => {
     res.status(500).json({ message: "Failed to load posts" });
   }
 });
+//post a post 
+router.post("/posts", async (req, res) => {
+  const { title, content, category } = req.body;
 
+  try {
+    console.log("REQ BODY:", req.body);
+
+    const newPost = new postModel({
+      author: "68735376fb9864bffdb5f899", // ✅ Hardcoded valid user ObjectId for now
+      title,
+      content,
+      category,
+      image: {
+        url: "https://images.unsplash.com/photo-1680159452310-a1ad0cf8b813?q=80&w=764&auto=format&fit=crop",
+        filename: "imagei"
+      }
+    });
+
+    await newPost.save();
+
+    console.log("NEW POST SAVED:", newPost);
+    res.status(201).json({ message: "Post created", post: newPost });
+  } catch (error) {
+    console.error("💥 Error Creating a Post:", error);
+    res.status(500).json({ message: "Failed to Add post", error: error.message });
+  }
+});
 router.get("/post/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -51,5 +81,7 @@ router.patch("/post/:id/like", async (req, res) => {
     res.status(500).json({ error: "Could not process like" });
   }
 });
+
+
 
 module.exports = router;
