@@ -20,7 +20,7 @@ export default function Hero() {
   const images = sortedPosts.slice(0, 3).map((posts) => posts.image.url);
 
   return (
-    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel"  data-bs-interval="3000">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-interval="2000">
       <div class="carousel-indicators">
         <button
           type="button"

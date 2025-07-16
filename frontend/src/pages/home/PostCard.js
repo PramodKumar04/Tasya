@@ -25,7 +25,7 @@ export default function PostCard({ post, currentUserId }) {
   };
 
   return (
-    <div className="card post-card" style={{ width: "18rem" }}>
+    <div className="card post-card" style={{ width: "18rem" ,marginBottom: "1rem"}}>
       <img
         src={image.url}
         className="card-img-top card-img"
@@ -36,9 +36,7 @@ export default function PostCard({ post, currentUserId }) {
         <h5 class="card-title">
           <b>{title}</b>
         </h5>
-        <h6 class="card-subtitle mb-2 text-muted">
-          {author.fullName.toUpperCase()}
-        </h6>
+        
         <p
           className="card-text"
           style={{
@@ -56,7 +54,7 @@ export default function PostCard({ post, currentUserId }) {
             style={{
               background: "none",
               border: "none",
-              paddingRight: "5rem",
+              paddingRight: "7rem",
               margin: "0",
               cursor: "pointer",
               color: liked ? "red" : "gray",
