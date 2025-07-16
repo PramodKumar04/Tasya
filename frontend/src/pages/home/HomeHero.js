@@ -48,18 +48,21 @@ export default function Hero() {
           <img src={images[0]} className="d-block w-100"  style={{ height: '500px', objectFit: 'cover' }} alt="image-1" />
           <div class="carousel-caption d-none d-md-block">
             <h5>#Trending 1</h5>
+            
           </div>
         </div>
         <div class="carousel-item">
           <img src={images[1]} class="d-block w-100"  style={{ height: '500px', objectFit: 'cover' }} alt="image-2" />
           <div class="carousel-caption d-none d-md-block">
             <h5>#Trending 2</h5>
+            
           </div>
         </div>
         <div class="carousel-item">
           <img src={images[2]} className="d-block w-100"  style={{ height: '500px', objectFit: 'cover' }} alt="img-3" />
           <div class="carousel-caption d-none d-md-block">
             <h5>#Trending 3</h5>
+            
           </div>
         </div>
       </div>

@@ -41,7 +41,7 @@ function Hero() {
             <span
               ref={typedRef}
               style={{
-                color: "red",
+                color: "#6C5CE7",
                 fontSize: "2.5rem",
                 whiteSpace: "pre",
                 textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",

@@ -5,6 +5,7 @@ import AuthPage from './AuthPage';
 function SignUp() {
     return ( 
         <div className='container'>
+            
             <AuthPage />
 
         </div>

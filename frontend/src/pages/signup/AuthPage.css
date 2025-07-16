@@ -1,3 +1,7 @@
+.row{
+    margin-top: 2rem;
+    padding: 1rem;
+}
 .contain {
     position: relative;
     width: 850px;
@@ -5,7 +9,7 @@
     background: #fff;
     border-radius: 15px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid #001723;
+  
     margin: 0; /* Remove any margin */
     overflow: hidden;
 
