@@ -3,7 +3,7 @@ const router = express.Router();
 const {postModel} = require("../models/Posts"); // ✅ use the model
 
 // GET all posts
-router.get("/", async (req, res) => {
+router.get("/posts", async (req, res) => {
   try {
     const posts = await postModel.find().populate("author", "fullName");
     res.json(posts);
@@ -11,6 +11,18 @@ router.get("/", async (req, res) => {
     console.error("Error fetching posts:", error);
     res.status(500).json({ message: "Failed to load posts" });
   }
+});
+
+router.get("/post/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await postModel.findById(id).populate("author", "fullName");
+    if (!post) return res.status(404).json({ error: "Post not found" });
+    res.json(post);
+  } catch (err) {
+    console.error("Error fetching post:", err);
+    res.status(500).json({ error: "Could not fetch post" });
+  } 
 });
 
 // PATCH: Like/Unlike a post
