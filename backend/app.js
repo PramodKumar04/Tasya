@@ -16,13 +16,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Test route
-app.get('/plus', (req, res) => {
-  res.send('Welcome to Tasya API!');
-});
 
 // Routes
-app.use('/api/posts', postRouter);
+app.use('/api', postRouter);
 
 // Start server
 const PORT = 5000;
