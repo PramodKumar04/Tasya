@@ -20,7 +20,7 @@ export default function Hero() {
   const images = sortedPosts.slice(0, 3).map((posts) => posts.image.url);
 
   return (
-    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel"  data-bs-interval="3000">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-interval="2000">
       <div class="carousel-indicators">
         <button
           type="button"
@@ -45,21 +45,21 @@ export default function Hero() {
       </div>
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src={images[0]} className="d-block w-100"  style={{ height: '500px', objectFit: 'cover' }} alt="image-1" />
+          <img src={images[0]} className="d-block w-100"  style={{ height: '700px', objectFit: 'fill' }} alt="image-1" />
           <div class="carousel-caption d-none d-md-block">
             <h5>#Trending 1</h5>
             
           </div>
         </div>
         <div class="carousel-item">
-          <img src={images[1]} class="d-block w-100"  style={{ height: '500px', objectFit: 'cover' }} alt="image-2" />
+          <img src={images[1]} class="d-block w-100"  style={{ height: '700px', objectFit: 'fill' }} alt="image-2" />
           <div class="carousel-caption d-none d-md-block">
             <h5>#Trending 2</h5>
             
           </div>
         </div>
         <div class="carousel-item">
-          <img src={images[2]} className="d-block w-100"  style={{ height: '500px', objectFit: 'cover' }} alt="img-3" />
+          <img src={images[2]} className="d-block w-100"  style={{ height: '700px', objectFit: 'fill' }} alt="img-3" />
           <div class="carousel-caption d-none d-md-block">
             <h5>#Trending 3</h5>
             
