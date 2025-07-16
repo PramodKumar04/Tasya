@@ -9,6 +9,8 @@ import SignUp from './pages/signup/SignUp';
 import PageNotFound from './pages/PageNotFound';
 import SupportPage from './pages/support/SupportPage';
 import HomePage from './pages/home/HomePage';
+import PostDetails from './pages/Post/PostDetails';
+import axios from 'axios';
 
 function App() {
   const location = useLocation();
@@ -25,6 +27,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
 

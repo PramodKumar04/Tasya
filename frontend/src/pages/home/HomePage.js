@@ -2,6 +2,7 @@ import SearchBar from './SearchBar.js';
 import NavBar from '../NavBar.js';
 import Hero from './HomeHero.js';
 import Posting from './Posting.js';
+import Filter from './Filter.js';
 
 export default function HomePage() {
     return (
@@ -17,7 +18,9 @@ export default function HomePage() {
                 </div>
 
                 <div className="row">
-                    <div className="col-12 offset-1">
+
+
+                    <div className="col-lg-11 col-md-9 col-sm-7 offset-lg-2 offset-md-1 offset-sm-0">
                         <Posting />
                     </div>
                 

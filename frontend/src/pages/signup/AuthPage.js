@@ -1,24 +1,63 @@
-import React, { useState } from "react";
-import "./AuthPage.css"; // Import your CSS file for styling
+import React, { useState, useEffect } from "react";
+import "./AuthPage.css";
+import NavBar from "../NavBar";
 
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
 
+  useEffect(() => {
+    const forms = document.querySelectorAll(".needs-validation");
+
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  }, []);
+
   return (
-    <div className="container-fluid">
-      <div className="row">
+    <div className="container-fluid mt-6">
+      <NavBar />
+      <div
+        className="row justify-content-center align-items-center"
+        style={{ height: "100vh", marginTop: "5rem" }}
+      >
         <div className={`contain ${isSignup ? "active" : ""}`}>
           {/* Login Box */}
           <div className="loginbox">
-            <form>
+            <form noValidate className="needs-validation">
               <h1 id="btn-press">Login</h1>
               <div className="inputbox">
-                <input type="email" placeholder="Username" required />
+                <input
+                  type="email"
+                  placeholder="Username"
+                  className="form-control"
+                  required
+                />
                 <i className="bx bxs-user"></i>
+                <div className="invalid-feedback">
+                  Please enter your Username
+                </div>
               </div>
               <div className="inputbox">
-                <input type="password" placeholder="Password" required />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className="form-control"
+                  required
+                />
                 <i className="bx bxs-key"></i>
+                <div className="invalid-feedback">
+                  Please enter your valid password
+                </div>
               </div>
               <div className="forget-link">
                 <a href="#" id="forgot">
@@ -48,18 +87,42 @@ const AuthPage = () => {
 
           {/* Sign-up Box */}
           <div className="loginbox signupbox">
-            <form>
+            <form noValidate className="needs-validation">
               <h1 id="btn-press">Sign-up</h1>
               <div className="inputbox">
-                <input type="text" placeholder="Username" required />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className="form-control"
+                  required
+                />
+                <div className="invalid-feedback">
+                  Please enter your valid Username
+                </div>
                 <i className="bx bxs-user"></i>
               </div>
               <div className="inputbox">
-                <input type="email" placeholder="Email" required />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="form-control"
+                  required
+                />
+                <div className="invalid-feedback">
+                  Please enter your valid email
+                </div>
                 <i className="bx bx-envelope"></i>
               </div>
               <div className="inputbox">
-                <input type="password" placeholder="Password" required />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className="form-control"
+                  required
+                />
+                <div className="invalid-feedback">
+                  Please enter a valid password
+                </div>
                 <i className="bx bxs-key"></i>
               </div>
               <button type="submit" className="btn">
@@ -108,7 +171,6 @@ const AuthPage = () => {
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
