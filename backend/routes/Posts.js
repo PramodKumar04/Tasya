@@ -26,7 +26,7 @@ router.get("/post/:id", async (req, res) => {
 });
 
 // PATCH: Like/Unlike a post
-router.patch("/:id/like", async (req, res) => {
+router.patch("/post/:id/like", async (req, res) => {
   const { id } = req.params;
   const userId = req.body.userId; // Simulated for now
 
