@@ -36,13 +36,7 @@ export default function PostCard({ post, currentUserId }) {
         <h5 class="card-title">
           <b>{title}</b>
         </h5>
-<<<<<<< HEAD
-       <h6 className="card-subtitle mb-2 text-muted">
-  {(author?.fullName || "Unknown Author").toUpperCase()}
-</h6>
-=======
-        
->>>>>>> ec40a5ec4801794c82d37d547fb54fbb99f238be
+  
         <p
           className="card-text"
           style={{
