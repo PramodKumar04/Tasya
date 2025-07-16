@@ -93,7 +93,7 @@ function Support() {
       </div>
       <div className="text-center mt-4">
         <p className="mb-1" style={{fontSize:"1.5rem"}}>Still need help? Email us at <a href="mailto:support@yourblog.com">support@creativehub.com</a></p>
-        <p className="mt-2" style={{fontSize:"1rem"}}>Follow us on<a href="#" target="_blank" rel="noopener noreferrer" style={{color: "black", fontSize: "22px",padding:"10px " }}><i class="fa fa-instagram" aria-hidden="true"></i></a>   <a href="#" target="_blank" rel="noopener noreferrer" style={{color: "black", fontSize: "22px" }}><i class="fa fa-twitter" aria-hidden="true"></i></a></p>
+        <p className="mt-2" style={{fontSize:"1rem"}}>Follow us on<a href="#" target="_blank" rel="noopener noreferrer" style={{color: "black", fontSize: "22px",padding:"10px " }}><i class="fa-brands fa-instagram"></i></a>   <a href="#" target="_blank" rel="noopener noreferrer" style={{color: "black", fontSize: "22px" }}><i class="fa-brands fa-x-twitter"></i></a></p>
       </div>
     </div>
   );

@@ -29,6 +29,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
+         
       </Routes>
 
       {!hideNavAndFooter && <Footer />}
