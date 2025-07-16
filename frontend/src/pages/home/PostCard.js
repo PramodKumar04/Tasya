@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function PostCard({ post, currentUserId }) {
   const { _id, title, content, image, author, category, createdAt } = post;
@@ -11,7 +12,7 @@ export default function PostCard({ post, currentUserId }) {
   const handleClick = async () => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/posts/${_id}/like`,
+        `http://localhost:5000/api/post/${_id}/like`,
         {
           userId: currentUserId,
         }
@@ -32,7 +33,9 @@ export default function PostCard({ post, currentUserId }) {
         style={{ height: "12rem" }}
       />
       <div class="card-body">
-        <h5 class="card-title"><b>{title}</b></h5>
+        <h5 class="card-title">
+          <b>{title}</b>
+        </h5>
         <h6 class="card-subtitle mb-2 text-muted">
           {author.fullName.toUpperCase()}
         </h6>
@@ -61,25 +64,26 @@ export default function PostCard({ post, currentUserId }) {
             }}
           >
             <i
-              className={liked ? "fa-solid fa-heart" : "fa-regular fa-heart"} 
-            ></i> &nbsp;<span style={{ color: "gray", fontSize: "15px" }}>{likes}</span>
+              className={liked ? "fa-solid fa-heart" : "fa-regular fa-heart"}
+            ></i>{" "}
+            &nbsp;
+            <span style={{ color: "gray", fontSize: "15px" }}>{likes}</span>
           </button>
-          
-          <a
-            href="#"
+
+          <Link
+            to={`/post/${post._id}`}
             style={{
-              border:"1px solid black",
+              border: "1px solid black",
               textDecoration: "none",
               textAlign: "center",
               color: "black",
               fontSize: "16px",
               padding: "5px 10px",
-              borderRadius:"25px"
-
+              borderRadius: "25px",
             }}
           >
             Read
-          </a>
+          </Link>
         </div>
       </div>
     </div>
