@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 export default function AddNewPost() {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
     category: "",
   });
+
+  const [image, setImage] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const forms = document.querySelectorAll(".needs-validation");
 
@@ -24,7 +29,6 @@ export default function AddNewPost() {
       );
     });
   }, []);
-  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setPostData((currPost) => ({
@@ -33,14 +37,34 @@ export default function AddNewPost() {
     }));
   };
 
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", postData.title);
+    formData.append("content", postData.content);
+    formData.append("category", postData.category);
+    formData.append("image", image);//previously it like this
+    
+
     try {
-      const res = await axios.post("http://localhost:5000/api/posts", postData);
-      navigate("/home");
+      await axios.post("http://localhost:5000/api/posts", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       alert("Post created successfully!");
-      //empty the form
+      navigate("/home");
+
+      // Reset form
       setPostData({ title: "", content: "", category: "" });
+      setImage(null);
+      document.querySelector("form").reset();
     } catch (err) {
       console.error("Failed to create post:", err);
       alert("Something went wrong. Check the console for details.");
@@ -72,9 +96,7 @@ export default function AddNewPost() {
               placeholder="Enter title"
               required
             />
-            <div className="invalid-feedback">
-              Please enter your valid title
-            </div>
+            <div className="invalid-feedback">Please enter your valid title</div>
           </div>
 
           <div className="mb-3">
@@ -93,7 +115,7 @@ export default function AddNewPost() {
               required
             />
             <div className="invalid-feedback">
-              Please add smething to your post
+              Please add something to your post
             </div>
           </div>
 
@@ -119,6 +141,22 @@ export default function AddNewPost() {
             </select>
             <div className="invalid-feedback">Please select a category</div>
           </div>
+
+          <div className="mb-3">
+            <label htmlFor="image" className="form-label">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              className="form-control"
+              name="image"
+              id="image"
+              onChange={handleImageChange}
+             
+            />
+            <div className="form-text">Optional: Upload an image for your post</div>
+          </div>
+
           <button type="submit" className="btn btn-primary mt-5 mb-5">
             Add
           </button>
