@@ -1,11 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const {postModel} = require("../models/Posts"); // ✅ use the model
-// const multer  = require('multer');
+const { postModel } = require("../models/Posts.js");
 
-// const {storage}= require("../cloudConfig.js");
-// const upload = multer({ storage});
-
+const { upload } = require("../cloudConfig.js");
 // GET all posts
 router.get("/posts", async (req, res) => {
   try {
@@ -16,22 +13,23 @@ router.get("/posts", async (req, res) => {
     res.status(500).json({ message: "Failed to load posts" });
   }
 });
-//post a post 
-router.post("/posts", async (req, res) => {
+//post a post
+router.post("/posts",upload.single("image") , async (req, res) => {
   const { title, content, category } = req.body;
 
   try {
-    console.log("REQ BODY:", req.body);
+    console.log("REQ BODY: ", req.body);
+    console.log("REQ FILE: ", req.file);
 
     const newPost = new postModel({
-      author: "68735376fb9864bffdb5f899", // ✅ Hardcoded valid user ObjectId for now
+      author: "68735376fb9864bffdb5f899",
       title,
       content,
       category,
       image: {
-        url: "https://images.unsplash.com/photo-1680159452310-a1ad0cf8b813?q=80&w=764&auto=format&fit=crop",
-        filename: "imagei"
-      }
+        url: req.file.path,
+        filename: req.file.filename,
+      },
     });
 
     await newPost.save();
@@ -40,9 +38,12 @@ router.post("/posts", async (req, res) => {
     res.status(201).json({ message: "Post created", post: newPost });
   } catch (error) {
     console.error("💥 Error Creating a Post:", error);
-    res.status(500).json({ message: "Failed to Add post", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to Add post", error: error.message });
   }
 });
+
 router.get("/post/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -52,7 +53,7 @@ router.get("/post/:id", async (req, res) => {
   } catch (err) {
     console.error("Error fetching post:", err);
     res.status(500).json({ error: "Could not fetch post" });
-  } 
+  }
 });
 
 // PATCH: Like/Unlike a post
@@ -81,7 +82,5 @@ router.patch("/post/:id/like", async (req, res) => {
     res.status(500).json({ error: "Could not process like" });
   }
 });
-
-
 
 module.exports = router;

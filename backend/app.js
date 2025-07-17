@@ -1,8 +1,14 @@
+if(process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const postRouter = require('./routes/Posts');
+console.log(process.env.CLOUD_NAME, process.env.CLOUD_API_KEY, process.env.CLOUD_API_SECRET);
+
 
 // Connect to MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/tasya')
@@ -15,6 +21,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 
 // Routes
