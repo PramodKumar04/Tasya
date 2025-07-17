@@ -1,26 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 export default function AddNewPost() {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
-    category: ""
+    category: "",
   });
-  const navigate = useNavigate(); 
+  useEffect(() => {
+    const forms = document.querySelectorAll(".needs-validation");
+
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  }, []);
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
-    
-    setPostData((currPost) => ({ ...currPost, [event.target.name]: event.target.value }));
+    setPostData((currPost) => ({
+      ...currPost,
+      [event.target.name]: event.target.value,
+    }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const res = await axios.post("http://localhost:5000/api/posts", postData);
-       navigate("/home");
+      navigate("/home");
       alert("Post created successfully!");
-//empty the form 
+      //empty the form
       setPostData({ title: "", content: "", category: "" });
     } catch (err) {
       console.error("Failed to create post:", err);
@@ -30,12 +49,19 @@ export default function AddNewPost() {
 
   return (
     <div className="row">
-      <div className="col col-8 offset-2 mt-4 ">
-        <h2><b>Create a New Post</b></h2>
+      <div
+        className="col col-lg-8 col-md-10 col-sm-12 offset-2 offset-lg-2 offset-md-1"
+        style={{ marginTop: "6rem" }}
+      >
+        <h2>
+          <b>Unleash Your Creativity</b>
+        </h2>
         <br />
         <form onSubmit={handleSubmit} noValidate className="needs-validation">
           <div className="mb-3">
-            <label htmlFor="title" className="form-label">Title</label>
+            <label htmlFor="title" className="form-label">
+              Title
+            </label>
             <input
               type="text"
               className="form-control"
@@ -46,12 +72,19 @@ export default function AddNewPost() {
               placeholder="Enter title"
               required
             />
+            <div className="invalid-feedback">
+              Please enter your valid title
+            </div>
           </div>
 
           <div className="mb-3">
-            <label htmlFor="content" className="form-label">Content</label>
+            <label htmlFor="content" className="form-label">
+              Content
+            </label>
             <textarea
               className="form-control"
+              width="100%"
+              rows={10}
               name="content"
               id="content"
               value={postData.content}
@@ -59,29 +92,36 @@ export default function AddNewPost() {
               placeholder="Write your content..."
               required
             />
+            <div className="invalid-feedback">
+              Please add smething to your post
+            </div>
           </div>
 
           <div className="mb-3">
-            <label htmlFor="category" className="form-label">Category</label>
-            <input
-              className="form-control"
+            <label htmlFor="category" className="form-label">
+              Category
+            </label>
+            <select
+              className="form-select"
               name="category"
-              list="datalistOptions"
               id="category"
-              placeholder="Type to search..."
               value={postData.category}
               onChange={handleChange}
-            />
-            <datalist id="datalistOptions">
-              <option value="blog" />
-              <option value="vlogs" />
-              <option value="art" />
-              <option value="newsletter" />
-              <option value="other" />
-            </datalist>
+              required
+            >
+              <option value="">Select a category</option>
+              <option value="blog">Blogs</option>
+              <option value="vlogs">Vlogs</option>
+              <option value="art">Art</option>
+              <option value="newsletter">Newsletter</option>
+              <option value="review">Reviews</option>
+              <option value="other">Other</option>
+            </select>
+            <div className="invalid-feedback">Please select a category</div>
           </div>
-
-          <button type="submit" className="btn btn-dark">Add</button>
+          <button type="submit" className="btn btn-primary mt-5 mb-5">
+            Add
+          </button>
         </form>
       </div>
     </div>
