@@ -40,11 +40,15 @@ export default function PostDetails() {
   const trending = sortedPosts.slice(0, 3);
 
   return (
-    <div className="container" style={{ marginTop: "8rem", marginBottom: "8rem" }}>
+    <div
+      className="container"
+      style={{ marginTop: "8rem", marginBottom: "8rem" }}
+    >
       <div className="row">
-        
         <div className="col-lg-8 col-md-12" style={{ padding: "20px" }}>
-          <h1><b>{title}</b></h1>
+          <h1>
+            <b>{title}</b>
+          </h1>
           <h4 style={{ fontSize: "20px" }}>
             <b>Created By: {author.fullName}</b>
           </h4>
@@ -61,13 +65,27 @@ export default function PostDetails() {
               marginBottom: "2rem",
             }}
           />
-          <p style={{ fontSize: "1.2rem" }}>{content}</p>
+          <div style={{ fontSize: "1.2rem" }}>
+            {content.split("\n").map((para, index) => (
+              <p key={index} style={{ marginBottom: "1rem" }}>
+                {para}
+              </p>
+            ))}
+          </div>
         </div>
 
         <div className="col-lg-4 col-md-12" style={{ padding: "10rem" }}>
-          <h3 style={{fontSize:"25px"}}>&nbsp;<b>#Trending</b></h3>
+          <h3 style={{ fontSize: "25px" }}>
+            &nbsp;<b>#Trending</b>
+          </h3>
           {trending.length > 0 ? (
-            trending.map((post) => <PostCard key={post._id} post={post} style={{padding:"2rem"}} />)
+            trending.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                style={{ padding: "2rem" }}
+              />
+            ))
           ) : (
             <p>No trending posts available.</p>
           )}
