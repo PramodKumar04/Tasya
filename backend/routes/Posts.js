@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { postModel } = require("../models/Posts.js");
+const { cloudinary, upload } = require("../cloudConfig.js");
 
-const { upload } = require("../cloudConfig.js");
 // GET all posts
 router.get("/posts", async (req, res) => {
   try {
@@ -13,8 +13,8 @@ router.get("/posts", async (req, res) => {
     res.status(500).json({ message: "Failed to load posts" });
   }
 });
-//post a post
-// Add support for both image and video upload
+
+// POST a post with image and video upload
 router.post("/posts", upload.fields([
   { name: "image", maxCount: 1 },
   { name: "video", maxCount: 1 }
@@ -32,20 +32,59 @@ router.post("/posts", upload.fields([
       category,
     });
 
-    // Image handling
+    // Handle image upload to Cloudinary
     if (req.files?.image?.[0]) {
-      newPost.image = {
-        url: req.files.image[0].path,
-        filename: req.files.image[0].filename
-      };
+      try {
+        const imageResult = await cloudinary.uploader.upload_stream(
+          {
+            folder: "tasya_dev/images",
+            resource_type: "image"
+          },
+          (error, result) => {
+            if (error) {
+              console.error("Image upload error:", error);
+              throw error;
+            }
+            return result;
+          }
+        );
+        
+        // Convert buffer to base64 and upload
+        const imageBuffer = req.files.image[0].buffer;
+        const imageBase64 = `data:${req.files.image[0].mimetype};base64,${imageBuffer.toString('base64')}`;
+        
+        const imageUploadResult = await cloudinary.uploader.upload(imageBase64, {
+          folder: "tasya_dev/images",
+          resource_type: "image"
+        });
+
+        newPost.image = {
+          url: imageUploadResult.secure_url,
+          filename: imageUploadResult.public_id
+        };
+      } catch (imageError) {
+        console.error("Image upload failed:", imageError);
+      }
     }
 
-    // Video handling
+    // Handle video upload to Cloudinary
     if (req.files?.video?.[0]) {
-      newPost.video = {
-        url: req.files.video[0].path,
-        filename: req.files.video[0].filename
-      };
+      try {
+        const videoBuffer = req.files.video[0].buffer;
+        const videoBase64 = `data:${req.files.video[0].mimetype};base64,${videoBuffer.toString('base64')}`;
+        
+        const videoUploadResult = await cloudinary.uploader.upload(videoBase64, {
+          folder: "tasya_dev/videos",
+          resource_type: "video"
+        });
+
+        newPost.video = {
+          url: videoUploadResult.secure_url,
+          filename: videoUploadResult.public_id
+        };
+      } catch (videoError) {
+        console.error("Video upload failed:", videoError);
+      }
     }
 
     await newPost.save();
