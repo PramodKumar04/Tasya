@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function NavBar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      setScrolled(offset > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div
-      className="container-fluid"
-      style={{ fontSize: "1.2rem"}}
-    >
+    <div className="container-fluid" style={{ fontSize: "1.2rem" }}>
       <nav
-        className="navbar fixed-top bg-light navbar-expand-lg shadow-sm"
-        style={{ borderBottom: "1px solid #ddd", zIndex: 1030 }}
+        className={`navbar fixed-top navbar-expand-md shadow-sm ${scrolled ? "bg-light" : "bg-transparent"}`}
+        style={{
+          borderBottom: scrolled ? "1px solid #ddd" : "none",
+          zIndex: 1030,
+          transition: "background-color 0.4s ease, border-bottom 0.4s ease"
+        }}
       >
         <div className="container p-2">
           <Link className="navbar-brand" to="/">
@@ -26,44 +39,19 @@ function NavBar() {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent" style={{paddingLeft:'40rem'}}>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent" style={{ paddingLeft: '40rem' }}>
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link
-                  className="nav-link active"
-                  aria-current="page"
-                  to="/home"
-                >
-                  Home
-                </Link>
-              </li>
-              
-              <li className="nav-item">
-                <Link className="nav-link active" to="/team">
-                  Team
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to="/plus">
-                  Plus
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to="/support">
-                  Support
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to="/signup">
-                  Login/Signup
-                </Link>
-              </li>
+              <li className="nav-item"><Link className="nav-link active" to="/home">Home</Link></li>
+              <li className="nav-item"><Link className="nav-link active" to="/team">Team</Link></li>
+              <li className="nav-item"><Link className="nav-link active" to="/plus">Plus</Link></li>
+              <li className="nav-item"><Link className="nav-link active" to="/support">Support</Link></li>
+              <li className="nav-item"><Link className="nav-link active" to="/signup">Login/Signup</Link></li>
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Add margin space below navbar for layout separation */}
+      {/* Spacer below navbar */}
       <div style={{ marginBottom: "20px" }}></div>
     </div>
   );

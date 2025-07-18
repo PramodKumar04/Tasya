@@ -14,31 +14,46 @@ router.get("/posts", async (req, res) => {
   }
 });
 //post a post
-router.post("/posts",upload.single("image") , async (req, res) => {
+// Add support for both image and video upload
+router.post("/posts", upload.fields([
+  { name: "image", maxCount: 1 },
+  { name: "video", maxCount: 1 }
+]), async (req, res) => {
   const { title, content, category } = req.body;
 
   try {
+    console.log("REQ BODY:", req.body);
+    console.log("FILES:", req.files);
 
     const newPost = new postModel({
       author: "68735376fb9864bffdb5f899",
       title,
       content,
       category,
-      image: {
-        url: req.file.path,
-        filename: req.file.filename,
-      },
     });
 
-    await newPost.save();
+    // Image handling
+    if (req.files?.image?.[0]) {
+      newPost.image = {
+        url: req.files.image[0].path,
+        filename: req.files.image[0].filename
+      };
+    }
 
-    console.log("NEW POST SAVED:", newPost);
+    // Video handling
+    if (req.files?.video?.[0]) {
+      newPost.video = {
+        url: req.files.video[0].path,
+        filename: req.files.video[0].filename
+      };
+    }
+
+    await newPost.save();
     res.status(201).json({ message: "Post created", post: newPost });
+
   } catch (error) {
     console.error("💥 Error Creating a Post:", error);
-    res
-      .status(500)
-      .json({ message: "Failed to Add post", error: error.message });
+    res.status(500).json({ message: "Failed to Add post", error: error.message });
   }
 });
 

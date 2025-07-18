@@ -10,14 +10,21 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET
 });
 
-const storage = new CloudinaryStorage({
+const imageStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "tasya_dev",
+    folder: "tasya_dev/images",
     allowedFormats: ["jpg", "png", "jpeg"],
   },
 });
+const videoStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "tasya_dev/videos",
+    allowedFormats: ["mp4", "mov"],
+  },
+});
 
-const upload = multer({ storage });
+const upload = multer({ imageStorage, videoStorage  });
 
 module.exports = { cloudinary, upload };

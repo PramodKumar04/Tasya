@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-export default function PostCard({ post, currentUserId }) {
-  const { _id, title, content, image, author, category, createdAt } = post;
+export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f899" }) {
+  const { _id, title, content, image, video, author, category, createdAt } = post;
 
   // Likes and liked state (local to this card)
-  const [likes, setLikes] = useState(post.likes);
-  const [liked, setLiked] = useState(post.likedBy?.includes(currentUserId));
+  const [likes, setLikes] = useState(post.likes || 0);
+  const [liked, setLiked] = useState(post.likedBy?.includes(currentUserId) || false);
 
   const handleClick = async () => {
     try {
@@ -24,19 +24,62 @@ export default function PostCard({ post, currentUserId }) {
     }
   };
 
+  // Function to render media (image or video)
+  const renderMedia = () => {
+    if (image?.url) {
+      return (
+        <img
+          src={image.url}
+          className="card-img-top card-img"
+          alt={title}
+          style={{ height: "12rem", objectFit: "cover", width: "100%" }}
+        />
+      );
+    } else if (video?.url) {
+      return (
+        <video
+          src={video.url}
+          className="card-img-top card-img"
+          style={{ height: "12rem", objectFit: "cover", width: "100%" }}
+          muted
+          loop
+          autoPlay
+          playsInline
+          controls={false}
+          onMouseEnter={(e) => e.target.play()}
+          onMouseLeave={(e) => e.target.pause()}
+        >
+          Your browser does not support the video tag.
+        </video>
+      );
+    } else {
+      return (
+        <div
+          style={{
+            height: "12rem",
+            backgroundColor: "#f0f0f0",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#888",
+            fontStyle: "italic",
+          }}
+        >
+          No media available
+        </div>
+      );
+    }
+  };
+
   return (
-    <div className="card post-card" style={{ width: "18rem" ,marginBottom: "1rem"}}>
-      <img
-        src={image.url}
-        className="card-img-top card-img"
-        alt={title}
-        style={{ height: "12rem" }}
-      />
-      <div class="card-body">
-        <h5 class="card-title">
+    <div className="card post-card" style={{ width: "18rem", marginBottom: "1rem" }}>
+      {renderMedia()}
+
+      <div className="card-body">
+        <h5 className="card-title">
           <b>{title}</b>
         </h5>
-  
+
         <p
           className="card-text"
           style={{
@@ -48,6 +91,7 @@ export default function PostCard({ post, currentUserId }) {
         >
           {content}
         </p>
+
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <button
             onClick={handleClick}

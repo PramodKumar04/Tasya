@@ -33,38 +33,70 @@ export default function PostDetails() {
   if (!post)
     return <div style={{ padding: "2rem" }}>Loading post details...</div>;
 
-  const { title, content, image, author, createdAt } = post;
+  const { title, content, image, video, author, createdAt } = post;
   const sortedPosts = [...posts]
     .filter((p) => p._id !== id)
-    .sort((a, b) => b.likes - a.likes);
+    .sort((a, b) => (b.likes || 0) - (a.likes || 0));
   const trending = sortedPosts.slice(0, 3);
 
+  // Function to render media
+  const renderMedia = () => {
+    if (video?.url) {
+      return (
+        <video
+          controls
+          className="img-fluid"
+          style={{
+            width: "100%",
+            height: "500px",
+            objectFit: "cover",
+            marginBottom: "2rem",
+            borderRadius: "8px",
+          }}
+        >
+          <source src={video.url} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    } else if (image?.url) {
+      return (
+        <img
+          src={image.url}
+          alt={title}
+          className="img-fluid"
+          style={{
+            width: "100%",
+            height: "500px",
+            objectFit: "cover",
+            marginBottom: "2rem",
+            borderRadius: "8px",
+          }}
+        />
+      );
+    }
+
+    return null;
+  };
   return (
     <div
       className="container"
       style={{ marginTop: "8rem", marginBottom: "8rem" }}
     >
       <div className="row">
-        <div className="col-lg-8 col-md-12" style={{ padding: "20px" }}>
+        <div className="col-lg-9 col-md-12" style={{ padding: "20px" }}>
           <h1>
             <b>{title}</b>
           </h1>
           <h4 style={{ fontSize: "20px" }}>
-            <b>Created By: {author.fullName}</b>
+            <b>Created By: {author?.fullName || "Unknown Author"}</b>
           </h4>
           <h6 style={{ marginBottom: "2rem" }}>
             Created At: {new Date(createdAt).toLocaleString()}
           </h6>
-          <img
-            src={image.url}
-            alt={title}
-            style={{
-              width: "100%",
-              height: "500px",
-              objectFit: "fill",
-              marginBottom: "2rem",
-            }}
-          />
+
+          {/* Render media */}
+          {renderMedia()}
+
           <div style={{ fontSize: "1.2rem" }}>
             {content.split("\n").map((para, index) => (
               <p key={index} style={{ marginBottom: "1rem" }}>
@@ -74,21 +106,21 @@ export default function PostDetails() {
           </div>
         </div>
 
-        <div className="col-lg-4 col-md-12" style={{ padding: "10rem" }}>
+        <div className="col-lg-3 col-md-12" style={{ padding: "20px" }}>
           <h3 style={{ fontSize: "25px" }}>
             &nbsp;<b>#Trending</b>
           </h3>
-          {trending.length > 0 ? (
-            trending.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                style={{ padding: "2rem" }}
-              />
-            ))
-          ) : (
-            <p>No trending posts available.</p>
-          )}
+          <div style={{ marginTop: "2rem" }}>
+            {trending.length > 0 ? (
+              trending.map((post) => (
+                <div key={post._id} style={{ marginBottom: "1rem" }}>
+                  <PostCard post={post} />
+                </div>
+              ))
+            ) : (
+              <p>No trending posts available.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
