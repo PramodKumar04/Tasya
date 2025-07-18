@@ -20,7 +20,7 @@ export default function HomePage() {
                 <div className="row">
 
 
-                    <div className="col-lg-11 col-md-9 col-sm-7 offset-lg-2 offset-md-1 offset-sm-0">
+                    <div className="col-lg-11 col-md-9 col-sm-7 offset-lg-3 offset-md-2 offset-sm-1">
                         <Posting />
                     </div>
                     <div className="col-lg-1 col-md-2 col-sm-3">
