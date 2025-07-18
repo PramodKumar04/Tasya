@@ -11,6 +11,11 @@ const AuthPage = () => {
     email: "",
     password: "",
   });
+  const [loginForm, setLoginForm] = useState({
+    username: "",
+    password :"",
+  });
+
 
   const navigate = useNavigate();
 
@@ -38,6 +43,12 @@ const AuthPage = () => {
       [event.target.name]: event.target.value,
     }));
   };
+  const handleChangeLogin = (event) => {
+    setLoginForm((newUser) => ({
+      ...newUser,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
   const handleSubmit = async (event) => {
   event.preventDefault();
@@ -47,18 +58,41 @@ const AuthPage = () => {
       "http://localhost:5000/api/users/signup",
       signupForm
     );
+    
 
     alert(response.data.message);
     navigate("/home");
 
     // Reset form
     setSignupForm({ username: "", email: "", password: "" });
+   
     document.querySelector("form.needs-validation.signup").reset();
+   
+
   } catch (err) {
     console.error("Failed to register:", err);
     alert(`Failed to register: 
       ${err.response?.data?.message || err.message}`);
   }
+};
+
+const handleLoginSubmit=async (event)=>{
+  event.preventDefault();
+  try{
+    const response = await axios.post("http://localhost:5000/api/users/login",
+    loginForm);
+     alert(response.data.message);
+    navigate("/home");
+
+     setLoginForm({username: "",  password: ""});
+
+  }catch(err){
+    console.error("Failed to Login:(");
+     alert(`Failed to register: 
+      ${err.response?.data?.message || err.message}`);
+    
+  }
+
 };
 
 
@@ -72,13 +106,16 @@ const AuthPage = () => {
         <div className={`contain ${isSignup ? "active" : ""}`}>
           {/* Login Box */}
           <div className="loginbox">
-            <form noValidate className="needs-validation">
+            <form noValidate className="needs-validation" onSubmit={handleLoginSubmit}>
               <h1 id="btn-press">Login</h1>
               <div className="inputbox">
                 <input
-                  type="email"
+                  type="text"
                   placeholder="Username"
+                  name="username"
+                  value= {loginForm.username}
                   className="form-control"
+               onChange={handleChangeLogin}
                   required
                 />
                 <i className="bx bxs-user"></i>
@@ -90,7 +127,10 @@ const AuthPage = () => {
                 <input
                   type="password"
                   placeholder="Password"
+                  name="password"
+                  value={loginForm.password}
                   className="form-control"
+                  onChange={handleChangeLogin}
                   required
                 />
                 <i className="bx bxs-key"></i>

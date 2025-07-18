@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,6 +15,26 @@ function NavBar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+    const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/users/logout", {
+        method: "GET",
+        credentials: "include", // 👈 Important for cookies/session
+      });
+
+      const data = await response.json();
+      console.log(data.message);
+
+      if (response.ok) {
+        navigate("/"); // redirect after logout
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
 
   return (
     <div className="container-fluid" style={{ fontSize: "1.2rem" }}>
@@ -46,6 +68,7 @@ function NavBar() {
               <li className="nav-item"><Link className="nav-link active" to="/plus">Plus</Link></li>
               <li className="nav-item"><Link className="nav-link active" to="/support">Support</Link></li>
               <li className="nav-item"><Link className="nav-link active" to="/signup">Login/Signup</Link></li>
+              <li className="nav-item"><Link onClick={handleLogout} className="nav-link active" to="/">Logout</Link></li>
             </ul>
           </div>
         </div>
