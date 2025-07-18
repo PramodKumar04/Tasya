@@ -29,7 +29,7 @@ router.post("/signup", async (req, res) => {
       if (err) {
         return res.status(500).json({ message: "Login failed" });
       }
-      return res.status(200).json({ message: "Welcome to Tasy0a!", user: registeredUser });
+      return res.status(200).json({ message: "Welcome to Tasya!", user: registeredUser });
     });
   } catch (err) {
     console.error("Signup error:", err);

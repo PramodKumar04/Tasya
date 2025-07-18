@@ -10,6 +10,8 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy= require("passport-local");
 
+
+
 const { userModel } = require("./models/User.js");
 
 
@@ -43,6 +45,9 @@ app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(userModel.authenticate()));
+
+passport.serializeUser(userModel.serializeUser());
+passport.deserializeUser(userModel.deserializeUser());
 
 
 
