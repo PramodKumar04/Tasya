@@ -36,6 +36,7 @@ router.post("/posts",upload.single("image") , async (req, res) => {
 
     console.log("NEW POST SAVED:", newPost);
     res.status(201).json({ message: "Post created", post: newPost });
+
   } catch (error) {
     console.error("💥 Error Creating a Post:", error);
     res

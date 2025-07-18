@@ -20,10 +20,10 @@ export default function HomePage() {
                 <div className="row">
 
 
-                    <div className="col-lg-11 col-md-9 col-sm-7 offset-lg-3 offset-md-2 offset-sm-1">
+                    <div className="col-lg-11 col-md-8 col-sm-7 offset-lg-3 offset-md-1 offset-sm-0">
                         <Posting />
                     </div>
-                    <div className="col-lg-1 col-md-2 col-sm-3">
+                    <div className="col-lg-1 col-md-3 col-sm-3">
                         <AddButton/>
                     </div>
                 

@@ -26,12 +26,39 @@ export default function PostCard({ post, currentUserId }) {
 
   return (
     <div className="card post-card" style={{ width: "18rem" ,marginBottom: "1rem"}}>
-      <img
-        src={image.url}
-        className="card-img-top card-img"
-        alt={title}
-        style={{ height: "12rem" }}
-      />
+   {image?.url ? (
+  <img
+    src={image.url}
+    className="card-img-top card-img"
+    alt={title}
+    style={{ height: "12rem", objectFit: "cover" }}
+  />
+) : post.video?.url ? (
+  <video
+    src={post.video.url}
+    className="card-img-top card-img"
+    style={{ height: "12rem", objectFit: "cover" }}
+    muted
+    loop
+    playsInline
+  />
+) : (
+  <div
+    style={{
+      height: "12rem",
+      backgroundColor: "#f0f0f0",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      color: "#888",
+      fontStyle: "italic",
+    }}
+  >
+    No media available
+  </div>
+)}
+
+
       <div class="card-body">
         <h5 class="card-title">
           <b>{title}</b>

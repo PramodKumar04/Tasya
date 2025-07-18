@@ -55,16 +55,24 @@ export default function PostDetails() {
           <h6 style={{ marginBottom: "2rem" }}>
             Created At: {new Date(createdAt).toLocaleString()}
           </h6>
-          <img
-            src={image.url}
-            alt={title}
-            style={{
+
+
+          {post.image?.url && (
+  <img src={post.image.url} alt={title} className="img-fluid"  style={{
               width: "100%",
               height: "500px",
               objectFit: "fill",
               marginBottom: "2rem",
-            }}
-          />
+            }} />
+)}
+
+{post.video?.url && (
+  <video controls className="img-fluid">
+    <source src={post.video.url} type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+)}
+         
           <div style={{ fontSize: "1.2rem" }}>
             {content.split("\n").map((para, index) => (
               <p key={index} style={{ marginBottom: "1rem" }}>

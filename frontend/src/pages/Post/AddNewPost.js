@@ -9,7 +9,8 @@ export default function AddNewPost() {
     category: "",
   });
 
-  const [image, setImage] = useState(null);
+ const [fileInp, setFileInp] = useState({ image: null, video: null });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,8 +38,11 @@ export default function AddNewPost() {
     }));
   };
 
-  const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
+  const handleFileChange = (event) => {
+    const {name , files} = event.target;
+    setFileInp( (currinp)=>({
+      ...currinp , [name]:files[0]
+  }));
   };
 
   const handleSubmit = async (event) => {
@@ -48,7 +52,9 @@ export default function AddNewPost() {
     formData.append("title", postData.title);
     formData.append("content", postData.content);
     formData.append("category", postData.category);
-    formData.append("image", image);//previously it like this
+    formData.append("image", fileInp.image);
+     formData.append("video", fileInp.video);
+   
     
 
     try {
@@ -63,7 +69,7 @@ export default function AddNewPost() {
 
       // Reset form
       setPostData({ title: "", content: "", category: "" });
-      setImage(null);
+      setFileInp({image :null , video: null});
       document.querySelector("form").reset();
     } catch (err) {
       console.error("Failed to create post:", err);
@@ -151,10 +157,25 @@ export default function AddNewPost() {
               className="form-control"
               name="image"
               id="image"
-              onChange={handleImageChange}
+              onChange={handleFileChange}
              
             />
             <div className="form-text">Optional: Upload an image for your post</div>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="video" className="form-label">
+              Upload Video
+            </label>
+            <input
+              type="file"
+              className="form-control"
+              name="video"
+              id="video"
+              onChange={handleFileChange}
+             
+            />
+            <div className="form-text">Optional: Upload video for your post</div>
           </div>
 
           <button type="submit" className="btn btn-primary mt-5 mb-5">
