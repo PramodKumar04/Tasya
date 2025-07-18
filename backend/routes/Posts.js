@@ -18,8 +18,6 @@ router.post("/posts",upload.single("image") , async (req, res) => {
   const { title, content, category } = req.body;
 
   try {
-    console.log("REQ BODY: ", req.body);
-    console.log("REQ FILE: ", req.file);
 
     const newPost = new postModel({
       author: "68735376fb9864bffdb5f899",
