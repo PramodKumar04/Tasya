@@ -7,7 +7,7 @@ const userSchema = new Schema({
         type:String,
         required:true
     },
-    fullName:{
+    userName:{
         type:String,
         required:true
     },
@@ -23,7 +23,7 @@ const userSchema = new Schema({
     ],
     bio:{
         type:String,
-        required:true
+       
     },
     contact:{
         linkedin:String,

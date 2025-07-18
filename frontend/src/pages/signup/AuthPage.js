@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./AuthPage.css";
 import NavBar from "../NavBar";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
+  const [signupForm, setSignupForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const forms = document.querySelectorAll(".needs-validation");
@@ -22,6 +31,36 @@ const AuthPage = () => {
       );
     });
   }, []);
+
+  const handleChange = (event) => {
+    setSignupForm((newUser) => ({
+      ...newUser,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/users/signup",
+      signupForm
+    );
+
+    alert(response.data.message);
+    navigate("/home");
+
+    // Reset form
+    setSignupForm({ username: "", email: "", password: "" });
+    document.querySelector("form.needs-validation.signup").reset();
+  } catch (err) {
+    console.error("Failed to register:", err);
+    alert(`Failed to register: 
+      ${err.response?.data?.message || err.message}`);
+  }
+};
+
 
   return (
     <div className="container-fluid mt-6">
@@ -87,11 +126,14 @@ const AuthPage = () => {
 
           {/* Sign-up Box */}
           <div className="loginbox signupbox">
-            <form noValidate className="needs-validation">
+            <form noValidate className="needs-validation" onSubmit={handleSubmit}>
               <h1 id="btn-press">Sign-up</h1>
               <div className="inputbox">
                 <input
                   type="text"
+                  name="username"
+                  value={signupForm.username}
+                  onChange={handleChange}
                   placeholder="Username"
                   className="form-control"
                   required
@@ -105,6 +147,9 @@ const AuthPage = () => {
                 <input
                   type="email"
                   placeholder="Email"
+                  name="email"
+                  value={signupForm.email}
+                  onChange={handleChange}
                   className="form-control"
                   required
                 />
@@ -116,6 +161,9 @@ const AuthPage = () => {
               <div className="inputbox">
                 <input
                   type="password"
+                  name="password"
+                  value={signupForm.password}
+                  onChange={handleChange}
                   placeholder="Password"
                   className="form-control"
                   required

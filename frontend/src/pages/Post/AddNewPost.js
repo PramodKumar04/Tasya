@@ -101,7 +101,8 @@ export default function AddNewPost() {
       document.querySelector("form").reset();
     } catch (err) {
       console.error("Failed to create post:", err);
-      alert(`Failed to create post: ${err.response?.data?.message || err.message}`);
+      alert(`Failed to create post: 
+        ${err.response?.data?.message || err.message}`);
     } finally {
       setUploading(false);
     }

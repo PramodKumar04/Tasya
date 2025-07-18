@@ -6,8 +6,26 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy= require("passport-local");
+
+const { userModel } = require("./models/User.js");
+
+
+
 const postRouter = require('./routes/Posts');
+const userRouter = require('./routes/Users.js');
 console.log(process.env.CLOUD_NAME, process.env.CLOUD_API_KEY, process.env.CLOUD_API_SECRET);
+
+const sessionOptions={secret:"tasyasecret", resave:false,saveUninitialized:true,
+                      cookie:{
+                        expires: Date.now()+7*24*60*60*1000,
+                        maxAge: 7*24*60*60*1000,
+                        httpOnly: true
+                      }
+};
+
 
 
 // Connect to MongoDB
@@ -21,11 +39,17 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session(sessionOptions));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(userModel.authenticate()));
 
 
 
 // Routes
 app.use('/api', postRouter);
+
+app.use('/api/users', userRouter);
 
 // Start server
 const PORT = 5000;
