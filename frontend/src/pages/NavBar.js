@@ -1,70 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "./signup/AuthContext"; 
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
-const [user, setUser]= useState(null);
-const navigate = useNavigate();
+  const { user, setUser, fetchUser } = useAuth(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
       setScrolled(offset > 300);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-  const getSessionInfo = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/session-info", {
-        withCredentials: true 
-      });
-      setUser(res.data.user); 
-      console.log("Session user:", res.data.user);
-    } catch (err) {
-      console.error("User not found , Unable to fetch:", err);
-    }
-  };
-
-  getSessionInfo();
-}, []);
-
-    
-
-    
-
   const handleLogout = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/logout", {
-        withCredentials: true
+      await axios.get("http://localhost:5000/api/users/logout", {
+        withCredentials: true,
       });
-
-      console.log(res.data.message);
-      setUser(null);         // Clear user from frontend state
-      navigate("/");         // Redirect to home
+      setUser(null);
+      navigate("/");
     } catch (err) {
-      console.error("Logout error:", err);
+      console.log("Logout failed", err);
     }
   };
 
   return (
     <div className="container-fluid" style={{ fontSize: "1.2rem" }}>
       <nav
-        className={`navbar fixed-top navbar-expand-md shadow-sm ${scrolled ? "bg-light" : "bg-transparent"}`}
+        className={`navbar fixed-top navbar-expand-md shadow-sm ${
+          scrolled ? "bg-light" : "bg-transparent"
+        }`}
         style={{
           borderBottom: scrolled ? "1px solid #ddd" : "none",
           zIndex: 1030,
-          transition: "background-color 0.4s ease, border-bottom 0.4s ease"
+          transition: "background-color 0.4s ease, border-bottom 0.4s ease",
         }}
       >
         <div className="container p-2">
           <Link className="navbar-brand" to="/">
-            <img src="media/tasya.png" alt="logo" style={{ width: "70px" }} />
+            <img src="media/tasya.png" alt="logo" style={{ width: "80px" }} />
           </Link>
           <button
             className="navbar-toggler"
@@ -77,22 +56,52 @@ const navigate = useNavigate();
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent" style={{ paddingLeft: '40rem' }}>
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item"><Link className="nav-link active" to="/home">Home</Link></li>
-              <li className="nav-item"><Link className="nav-link active" to="/team">Team</Link></li>
-              <li className="nav-item"><Link className="nav-link active" to="/plus">Plus</Link></li>
-              <li className="nav-item"><Link className="nav-link active" to="/support">Support</Link></li>
-{!user && ( <li className="nav-item"><Link className="nav-link active" to="/signup">Login/Signup</Link></li>)}
-             {user && ( <li className="nav-item"><Link onClick={handleLogout} className="nav-link active" to="/">Logout</Link></li>)}
-             
+          <div
+            className="collapse navbar-collapse justify-content-end"
+            id="navbarSupportedContent"
+          >
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <Link className="nav-link" to="/home">Home</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/team">Team</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/plus">Plus</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/support">Support</Link>
+              </li>
+
+              {user ? (
+                <>
+                  <li className="nav-item">
+                    <span className="nav-link">
+                      Welcome {user.username}
+                    </span>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link  "
+                      onClick={handleLogout}
+                      style={{ color:"black", border: "none", background: "none" }}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signup">
+                    Login / Signup
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>
       </nav>
-
-      {/* Spacer below navbar */}
-      <div style={{ marginBottom: "20px" }}></div>
     </div>
   );
 }

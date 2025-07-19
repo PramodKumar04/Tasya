@@ -31,7 +31,17 @@ router.post("/signup", async (req, res) => {
       if (err) {
         return res.status(500).json({ message: "Login failed" });
       }
-      return res.status(200).json({ message: "Welcome to Tasya!", user: registeredUser });
+      // Send only safe user data
+      const safeUser = {
+        _id: registeredUser._id,
+        username: registeredUser.username,
+        email: registeredUser.email,
+        interests: registeredUser.interests,
+        followers: registeredUser.followers,
+        following: registeredUser.following,
+        createdAt: registeredUser.createdAt
+      };
+      return res.status(200).json({ message: "Welcome to Tasya!", user: safeUser });
     });
   } catch (err) {
     console.error("Signup error:", err);
@@ -56,38 +66,22 @@ router.post("/login", (req, res, next) => {
       }
 
       console.log("User logged in:", user); // 👈 Shows logged-in user in console
-      return res.status(200).json({ message: "Login successful!", user });
+      // Send only safe user data
+      const safeUser = {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        interests: user.interests,
+        followers: user.followers,
+        following: user.following,
+        createdAt: user.createdAt
+      };
+      return res.status(200).json({ message: "Login successful!", user: safeUser });
     });
   })(req, res, next);
 });
 
-// router.post("/login",passport.authenticate("local", { failureRedirect: '/login', failureFlash: true }), async(req, res)=>{
-//   const {username}= req.body;
-
-// res.status(200).json({ message: "Welcome to Tasya!", user: username});
-
-// })
-
-
-//LOGOUT 
-// router.get("/logout", (req, res, next)=>{
-//   req.logout((err)=>{
-//     if(err){
-//       console.log(err);
-//       next(err);
-
-
-//     }
-//     console.log("logged out");
-    
-//     return res.status(200).json({ message: "Logout successful!"});
-
-    
-
-//   });
-// })
-
-
+//LOGOUT
 router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -100,13 +94,19 @@ router.get("/logout", (req, res, next) => {
         console.error("Session destroy error:", err);
         return res.status(500).json({ message: "Could not logout." });
       }
-
-     
+      
       console.log("User logged out.");
       return res.status(200).json({ message: "Logout successful!" });
     });
   });
 });
 
-
+// FIXED SESSION INFO ROUTE - Now returns user: null instead of 401 status
+router.get("/session-info", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.json({ user: req.user });
+  } else {
+    return res.json({ user: null });
+  }
+});
 module.exports = router;

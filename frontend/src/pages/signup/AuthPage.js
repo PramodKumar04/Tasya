@@ -3,6 +3,7 @@ import "./AuthPage.css";
 import NavBar from "../NavBar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext"; 
 
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -13,15 +14,14 @@ const AuthPage = () => {
   });
   const [loginForm, setLoginForm] = useState({
     username: "",
-    password :"",
+    password: "",
   });
 
-
   const navigate = useNavigate();
+  const { setUser } = useAuth(); 
 
   useEffect(() => {
     const forms = document.querySelectorAll(".needs-validation");
-
     Array.from(forms).forEach((form) => {
       form.addEventListener(
         "submit",
@@ -43,6 +43,7 @@ const AuthPage = () => {
       [event.target.name]: event.target.value,
     }));
   };
+
   const handleChangeLogin = (event) => {
     setLoginForm((newUser) => ({
       ...newUser,
@@ -51,54 +52,56 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/signup",
+        signupForm,
+        { withCredentials: true } 
+      );
 
-  try {
-    const response = await axios.post(
-      "http://localhost:5000/api/users/signup",
-      signupForm
-    );
-    
+      alert(response.data.message);
 
-    alert(response.data.message);
-    navigate("/home");
+      setUser(response.data.user || { username: signupForm.username });
 
-    // Reset form
-    setSignupForm({ username: "", email: "", password: "" });
-   
-    document.querySelector("form.needs-validation.signup").reset();
-   
+      navigate("/home");
 
-  } catch (err) {
-    console.error("Failed to register:", err);
-    alert(`Failed to register: 
-      ${err.response?.data?.message || err.message}`);
-  }
-};
+      setSignupForm({ username: "", email: "", password: "" });
+      document.querySelector("form.needs-validation.signup")?.reset();
+    } catch (err) {
+      console.error("Failed to register:", err);
+      alert(`Failed to register: 
+        ${err.response?.data?.message || err.message}`);
+    }
+  };
 
-const handleLoginSubmit=async (event)=>{
-  event.preventDefault();
-  try{
-    const response = await axios.post("http://localhost:5000/api/users/login",
-    loginForm);
-     alert(response.data.message);
-    navigate("/home");
+  const handleLoginSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        loginForm,
+        { withCredentials: true } // ✅ cookies
+      );
 
-     setLoginForm({username: "",  password: ""});
+      alert(response.data.message);
 
-  }catch(err){
-    console.error("Failed to Login:(");
-     alert(`Failed to register: 
-      ${err.response?.data?.message || err.message}`);
-    
-  }
+      // ✅ Save user to context
+      setUser(response.data.user || { username: loginForm.username });
 
-};
-
+      setLoginForm({ username: "", password: "" });
+      navigate("/home");
+    } catch (err) {
+      console.error("Failed to login:", err);
+      alert(`Failed to login: 
+        ${err.response?.data?.message || err.message}`);
+    }
+  };
 
   return (
     <div className="container-fluid mt-6">
       <NavBar />
+      {/* 🔽 all below kept untouched */}
       <div
         className="row justify-content-center align-items-center"
         style={{ height: "100vh", marginTop: "5rem" }}
@@ -106,16 +109,20 @@ const handleLoginSubmit=async (event)=>{
         <div className={`contain ${isSignup ? "active" : ""}`}>
           {/* Login Box */}
           <div className="loginbox">
-            <form noValidate className="needs-validation" onSubmit={handleLoginSubmit}>
+            <form
+              noValidate
+              className="needs-validation"
+              onSubmit={handleLoginSubmit}
+            >
               <h1 id="btn-press">Login</h1>
               <div className="inputbox">
                 <input
                   type="text"
                   placeholder="Username"
                   name="username"
-                  value= {loginForm.username}
+                  value={loginForm.username}
                   className="form-control"
-               onChange={handleChangeLogin}
+                  onChange={handleChangeLogin}
                   required
                 />
                 <i className="bx bxs-user"></i>
@@ -166,7 +173,11 @@ const handleLoginSubmit=async (event)=>{
 
           {/* Sign-up Box */}
           <div className="loginbox signupbox">
-            <form noValidate className="needs-validation" onSubmit={handleSubmit}>
+            <form
+              noValidate
+              className="needs-validation signup"
+              onSubmit={handleSubmit}
+            >
               <h1 id="btn-press">Sign-up</h1>
               <div className="inputbox">
                 <input

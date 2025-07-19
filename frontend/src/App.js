@@ -1,5 +1,7 @@
+// src/App.js
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+
 import Navbar from './pages/NavBar';
 import Footer from './pages/Footer';
 import Home from './pages/opening/Opening';
@@ -11,16 +13,17 @@ import SupportPage from './pages/support/SupportPage';
 import HomePage from './pages/home/HomePage';
 import PostDetails from './pages/Post/PostDetails';
 import AddNewPost from './pages/Post/AddNewPost';
-import axios from 'axios';
+
+import { AuthProvider } from './pages/signup/AuthContext';
 
 function App() {
   const location = useLocation();
   const hideNavAndFooter = location.pathname === '/signup';
 
   return (
-    <>
+    <AuthProvider>
       {!hideNavAndFooter && <Navbar />}
-      
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/team" element={<AboutPage />} />
@@ -34,7 +37,7 @@ function App() {
       </Routes>
 
       {!hideNavAndFooter && <Footer />}
-    </>
+    </AuthProvider>
   );
 }
 
