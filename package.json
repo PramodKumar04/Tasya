@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "cloudinary": "^1.41.3",
+    "dotenv": "^17.2.0",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0"
+  }
+}

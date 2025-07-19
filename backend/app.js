@@ -10,7 +10,8 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy= require("passport-local");
 
-
+//flash
+const flash =require("connect-flash");
 
 const { userModel } = require("./models/User.js");
 
@@ -38,16 +39,30 @@ mongoose.connect('mongodb://127.0.0.1:27017/tasya')
 // Middlewares
 app.use(cors({
   origin: 'http://localhost:3000',
+  credentials: true
+
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
+
+
 passport.use(new LocalStrategy(userModel.authenticate()));
 
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
+ 
+app.use(flash());
+
+app.get('/api/session-info', (req, res) => {
+  res.json({
+    user: req.user || null,
+    success: req.flash("success"),
+    error: req.flash("error")
+  });
+});
 
 
 
@@ -55,6 +70,7 @@ passport.deserializeUser(userModel.deserializeUser());
 app.use('/api', postRouter);
 
 app.use('/api/users', userRouter);
+
 
 // Start server
 const PORT = 5000;

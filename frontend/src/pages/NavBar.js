@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
+const [user, setUser]= useState(null);
+const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,21 +18,35 @@ function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-    const navigate = useNavigate();
+  useEffect(() => {
+  const getSessionInfo = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/session-info", {
+        withCredentials: true 
+      });
+      setUser(res.data.user); 
+      console.log("Session user:", res.data.user);
+    } catch (err) {
+      console.error("User not found , Unable to fetch:", err);
+    }
+  };
+
+  getSessionInfo();
+}, []);
+
+    
+
+    
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/users/logout", {
-        method: "GET",
-        credentials: "include", // 👈 Important for cookies/session
+      const res = await axios.get("http://localhost:5000/api/users/logout", {
+        withCredentials: true
       });
 
-      const data = await response.json();
-      console.log(data.message);
-
-      if (response.ok) {
-        navigate("/"); // redirect after logout
-      }
+      console.log(res.data.message);
+      setUser(null);         // Clear user from frontend state
+      navigate("/");         // Redirect to home
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -67,8 +83,9 @@ function NavBar() {
               <li className="nav-item"><Link className="nav-link active" to="/team">Team</Link></li>
               <li className="nav-item"><Link className="nav-link active" to="/plus">Plus</Link></li>
               <li className="nav-item"><Link className="nav-link active" to="/support">Support</Link></li>
-              <li className="nav-item"><Link className="nav-link active" to="/signup">Login/Signup</Link></li>
-              <li className="nav-item"><Link onClick={handleLogout} className="nav-link active" to="/">Logout</Link></li>
+{!user && ( <li className="nav-item"><Link className="nav-link active" to="/signup">Login/Signup</Link></li>)}
+             {user && ( <li className="nav-item"><Link onClick={handleLogout} className="nav-link active" to="/">Logout</Link></li>)}
+             
             </ul>
           </div>
         </div>
