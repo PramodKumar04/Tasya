@@ -1,5 +1,7 @@
 // src/App.js
 import React from 'react';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 import Navbar from './pages/NavBar';
@@ -34,9 +36,11 @@ function App() {
         <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/create" element={<AddNewPost />} />
+        
       </Routes>
 
       {!hideNavAndFooter && <Footer />}
+      <ToastContainer position="top-center" />
     </AuthProvider>
   );
 }

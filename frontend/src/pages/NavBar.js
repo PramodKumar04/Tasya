@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "./signup/AuthContext"; 
+import { useAuth } from "./signup/AuthContext";
+import { toast,ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
-  const { user, setUser, fetchUser } = useAuth(); 
+  const { user, setUser, fetchUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,16 +20,18 @@ function NavBar() {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await axios.get("http://localhost:5000/api/users/logout", {
-        withCredentials: true,
-      });
-      setUser(null);
-      navigate("/");
-    } catch (err) {
-      console.log("Logout failed", err);
-    }
-  };
+  try {
+    await axios.get("http://localhost:5000/api/users/logout", {
+      withCredentials: true,
+    });
+    setUser(null);
+    toast.success("Logout successful!", { autoClose: 2000 });
+    navigate("/");
+  } catch (err) {
+    toast.error("Logout failed!", { autoClose: 2000 });
+    console.log("Logout failed", err);
+  }
+};
 
   return (
     <div className="container-fluid" style={{ fontSize: "1.2rem" }}>
@@ -62,30 +66,42 @@ function NavBar() {
           >
             <ul className="navbar-nav">
               <li className="nav-item">
-                <Link className="nav-link" to="/home">Home</Link>
+                <Link className="nav-link" to="/home">
+                  Home
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/team">Team</Link>
+                <Link className="nav-link" to="/team">
+                  Team
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/plus">Plus</Link>
+                <Link className="nav-link" to="/plus">
+                  Plus
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/support">Support</Link>
+                <Link className="nav-link" to="/support">
+                  Support
+                </Link>
               </li>
 
               {user ? (
                 <>
                   <li className="nav-item">
-                    <span className="nav-link">
+                    <Link className="nav-link" to="/dashboard">
                       Welcome {user.username}
-                    </span>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <button
                       className="nav-link  "
                       onClick={handleLogout}
-                      style={{ color:"black", border: "none", background: "none" }}
+                      style={{
+                        color: "black",
+                        border: "none",
+                        background: "none",
+                      }}
                     >
                       Logout
                     </button>

@@ -4,6 +4,9 @@ import NavBar from "../NavBar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -52,51 +55,49 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/signup",
-        signupForm,
-        { withCredentials: true } 
-      );
+  event.preventDefault();
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/users/signup",
+      signupForm,
+      { withCredentials: true }
+    );
 
-      alert(response.data.message);
+    toast.success(response.data.message || "Signup successful!");
 
-      setUser(response.data.user || { username: signupForm.username });
+    setUser(response.data.user || { username: signupForm.username });
 
-      navigate("/home");
+    navigate("/home");
 
-      setSignupForm({ username: "", email: "", password: "" });
-      document.querySelector("form.needs-validation.signup")?.reset();
-    } catch (err) {
-      console.error("Failed to register:", err);
-      alert(`Failed to register: 
-        ${err.response?.data?.message || err.message}`);
-    }
-  };
+    setSignupForm({ username: "", email: "", password: "" });
+    document.querySelector("form.needs-validation.signup")?.reset();
+  } catch (err) {
+    console.error("Failed to register:", err);
+    toast.error(err.response?.data?.message || "Signup failed");
+  }
+};
+
 
   const handleLoginSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/login",
-        loginForm,
-        { withCredentials: true } // ✅ cookies
-      );
+  event.preventDefault();
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/users/login",
+      loginForm,
+      { withCredentials: true }
+    );
 
-      alert(response.data.message);
+    toast.success(response.data.message || "Login successful!");
 
-      // ✅ Save user to context
-      setUser(response.data.user || { username: loginForm.username });
+    setUser(response.data.user || { username: loginForm.username });
 
-      setLoginForm({ username: "", password: "" });
-      navigate("/home");
-    } catch (err) {
-      console.error("Failed to login:", err);
-      alert(`Failed to login: 
-        ${err.response?.data?.message || err.message}`);
-    }
-  };
+    setLoginForm({ username: "", password: "" });
+    navigate("/home");
+  } catch (err) {
+    console.error("Failed to login:", err);
+    toast.error(err.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <div className="container-fluid mt-6">
