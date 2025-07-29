@@ -15,7 +15,7 @@ import SupportPage from './pages/support/SupportPage';
 import HomePage from './pages/home/HomePage';
 import PostDetails from './pages/Post/PostDetails';
 import AddNewPost from './pages/Post/AddNewPost';
-
+import Profile from './pages/userProfile/Profile';
 import { AuthProvider } from './pages/signup/AuthContext';
 
 function App() {
@@ -36,7 +36,8 @@ function App() {
         <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/create" element={<AddNewPost />} />
-        
+        <Route path="/profile" element={<Profile/>} />
+
       </Routes>
 
       {!hideNavAndFooter && <Footer />}

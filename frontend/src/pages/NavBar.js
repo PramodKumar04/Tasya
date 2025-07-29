@@ -89,7 +89,10 @@ function NavBar() {
               {user ? (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/dashboard">
+
+
+                   <Link className="nav-link" to="/profile">
+
                       Welcome {user.username}
                     </Link>
                   </li>
