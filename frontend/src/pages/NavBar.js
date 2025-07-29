@@ -77,9 +77,9 @@ function NavBar() {
               {user ? (
                 <>
                   <li className="nav-item">
-                    <span className="nav-link">
+                   <Link className="nav-link" to="/profile">
                       Welcome {user.username}
-                    </span>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <button
