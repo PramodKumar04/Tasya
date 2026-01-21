@@ -1,6 +1,7 @@
-if(process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+require("dotenv").config({ override: true });
+
+console.log("MONGO_URI =", process.env.MONGO_URI);
+
 
 const express = require('express');
 const app = express();
@@ -27,9 +28,13 @@ const sessionOptions={secret:"tasyasecret", resave:false,saveUninitialized:false
 };
 
 // Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/tasya')
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.log("MongoDB Error:", err));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB Atlas connected"))
+.catch(err => console.error("MongoDB connection error:", err));
+
 
 // Middlewares
 app.use(cors({
