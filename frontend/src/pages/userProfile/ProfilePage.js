@@ -1,6 +1,6 @@
 import React from "react";
 
-const Profile = () => {
+export default function Profile(){
   return (
     <div className="container mt-5 pb-5">
       {/* Cover Photo Section */}
@@ -68,6 +68,11 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      <div class="container text-center">
+        <div class="col align-self-end">
+          <button>create +</button>
+        </div>
+      </div>
       <hr></hr>
 
 
@@ -76,4 +81,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+
