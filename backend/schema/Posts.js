@@ -25,4 +25,10 @@ const postSchema = new Schema({
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 }, { timestamps: true });
 
+postSchema.index({
+  title: "text",
+  content: "text"
+});
+
+
 module.exports = postSchema;

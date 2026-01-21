@@ -135,4 +135,24 @@ router.patch("/post/:id/like", async (req, res) => {
   }
 });
 
+router.get("/posts/search",async(req,res)=>{
+  try{
+    const {q} =req.query;
+    if(!q || q.trim()===""){
+      return res.status(400).json({message:"Search query is required"});
+    }
+
+    const results = await postModel.find(
+      {$text:{$search:q}},
+      {score:{$meta:"textScore"}}
+    )
+    .sort({ score: { $meta: "textScore" } })
+    .populate("author", "username");
+
+    res.status(200).json(results);
+  }catch(error){
+    res.status(500).json({message:"Search failed"});
+  }
+});
+
 module.exports = router;

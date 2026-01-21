@@ -101,7 +101,7 @@ router.get("/logout", (req, res, next) => {
   });
 });
 
-// FIXED SESSION INFO ROUTE - Now returns user: null instead of 401 status
+
 router.get("/session-info", (req, res) => {
   if (req.isAuthenticated()) {
     return res.json({ user: req.user });
