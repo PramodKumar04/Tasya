@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [signupForm, setSignupForm] = useState({
     username: "",
     email: "",
@@ -56,6 +57,7 @@ const AuthPage = () => {
 
   const handleSubmit = async (event) => {
   event.preventDefault();
+  setLoading(true);
   try {
     const response = await axios.post(
       "https://tasya.onrender.com/api/users/signup",
@@ -63,6 +65,7 @@ const AuthPage = () => {
       { withCredentials: true }
     );
 
+    toast.dismiss(); // Clear any existing toasts
     toast.success(response.data.message || "Signup successful!");
 
     setUser(response.data.user || { username: signupForm.username });
@@ -73,13 +76,17 @@ const AuthPage = () => {
     document.querySelector("form.needs-validation.signup")?.reset();
   } catch (err) {
     console.error("Failed to register:", err);
+    toast.dismiss();
     toast.error(err.response?.data?.message || "Signup failed");
+  } finally {
+    setLoading(false);
   }
 };
 
 
   const handleLoginSubmit = async (event) => {
   event.preventDefault();
+  setLoading(true);
   try {
     const response = await axios.post(
       "https://tasya.onrender.com/api/users/login",
@@ -87,6 +94,7 @@ const AuthPage = () => {
       { withCredentials: true }
     );
 
+    toast.dismiss(); // Clear any existing toasts
     toast.success(response.data.message || "Login successful!");
 
     setUser(response.data.user || { username: loginForm.username });
@@ -95,7 +103,10 @@ const AuthPage = () => {
     navigate("/home");
   } catch (err) {
     console.error("Failed to login:", err);
+    toast.dismiss();
     toast.error(err.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -119,7 +130,7 @@ const AuthPage = () => {
               <div className="inputbox">
                 <input
                   type="text"
-                  placeholder="Username"
+                  placeholder="Username or Email"
                   name="username"
                   value={loginForm.username}
                   className="form-control"
@@ -128,7 +139,7 @@ const AuthPage = () => {
                 />
                 <i className="bx bxs-user"></i>
                 <div className="invalid-feedback">
-                  Please enter your Username
+                  Please enter your Username or Email
                 </div>
               </div>
               <div className="inputbox">
@@ -151,8 +162,8 @@ const AuthPage = () => {
                   Forgot password?
                 </a>
               </div>
-              <button type="submit" className="btn">
-                Login
+              <button type="submit" className="btn" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
               </button>
               <p>or login with social platforms</p>
               <div className="social_icons">
@@ -225,8 +236,8 @@ const AuthPage = () => {
                 </div>
                 <i className="bx bxs-key"></i>
               </div>
-              <button type="submit" className="btn">
-                Register
+              <button type="submit" className="btn" disabled={loading}>
+                {loading ? "Registering..." : "Register"}
               </button>
               <p>or Signup with socials</p>
               <div className="social_icons">

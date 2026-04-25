@@ -60,6 +60,21 @@ export default function PostDetails() {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    
+    try {
+      await axios.delete(
+        `https://tasya.onrender.com/api/comment/${commentId}`,
+        { withCredentials: true }
+      );
+      setComments(comments.filter(c => c._id !== commentId));
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+      alert(err.response?.data?.message || "Failed to delete comment");
+    }
+  };
+
   if (!post)
     return <div style={{ padding: "2rem" }}>Loading post details...</div>;
 
@@ -237,6 +252,15 @@ export default function PostDetails() {
                       </h6>
                       <p className="mb-0 text-dark" style={{ whiteSpace: 'pre-wrap' }}>{comment.content}</p>
                     </div>
+                    {user && (comment.author?._id === user._id || comment.author === user._id) && (
+                      <button 
+                        onClick={() => handleDeleteComment(comment._id)}
+                        className="btn btn-sm text-danger ms-auto align-self-start"
+                        title="Delete Comment"
+                      >
+                        <span className="material-icons" style={{ fontSize: '18px' }}>delete</span>
+                      </button>
+                    )}
                   </div>
                 ))
               ) : (

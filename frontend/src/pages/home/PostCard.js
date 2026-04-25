@@ -23,9 +23,8 @@ export default function PostCard({ post }) {
     try {
       const res = await axios.patch(
         `https://tasya.onrender.com/api/post/${_id}/like`,
-        {
-          userId: currentUserId,
-        }
+        {},
+        { withCredentials: true }
       );
       setLikes(res.data.likes);
       setLiked(res.data.liked);

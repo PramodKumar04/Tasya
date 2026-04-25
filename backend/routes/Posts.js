@@ -131,21 +131,23 @@ router.get("/post/:id", async (req, res) => {
 
 // PATCH: Like/Unlike a post
 router.patch("/post/:id/like", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "You must be logged in to like posts." });
+  }
   const { id } = req.params;
-  const userId = req.body.userId; // Simulated for now
 
   try {
     const post = await postModel.findById(id);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const alreadyLiked = post.likedBy.includes(userId);
+    const alreadyLiked = post.likedBy.includes(req.user._id);
 
     if (alreadyLiked) {
-      post.likes -= 1;
-      post.likedBy.pull(userId);
+      post.likes = Math.max(0, (post.likes || 1) - 1);
+      post.likedBy.pull(req.user._id);
     } else {
-      post.likes += 1;
-      post.likedBy.push(userId);
+      post.likes = (post.likes || 0) + 1;
+      post.likedBy.push(req.user._id);
     }
 
     await post.save();
@@ -217,6 +219,29 @@ router.get("/post/:id/comments", async (req, res) => {
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({ error: "Could not fetch comments" });
+  }
+});
+
+// DELETE a comment
+router.delete("/comment/:commentId", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const comment = await commentModel.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    // Check if the user is the author
+    if (comment.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "You can only delete your own comments" });
+    }
+
+    await commentModel.findByIdAndDelete(req.params.commentId);
+    res.json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res.status(500).json({ message: "Failed to delete comment" });
   }
 });
 

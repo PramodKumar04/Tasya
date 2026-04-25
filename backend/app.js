@@ -31,8 +31,8 @@ const sessionOptions = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    secure: process.env.NODE_ENV === "production" ? true : false,
+    sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+    secure: process.env.NODE_ENV === "development" ? false : true,
   }
 };
 
@@ -44,7 +44,15 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Middlewares
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://tasya-creativehub.onrender.com'],
+  origin: function (origin, callback) {
+    // Allow any origin that is on render.com or localhost
+    if (!origin || origin.endsWith('onrender.com') || origin.includes('localhost')) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked origin:", origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
@@ -52,6 +60,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api')) {
+    console.log(`${req.method} ${req.url} - Auth: ${req.isAuthenticated()} - User: ${req.user ? req.user.username : 'none'}`);
+  }
+  next();
+});
 
 passport.use(new LocalStrategy(userModel.authenticate()));
 

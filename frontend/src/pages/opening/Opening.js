@@ -11,7 +11,7 @@ import { useAuth } from '../signup/AuthContext';
 function Opening() {
     const { user } = useAuth();
     return ( 
-        <div>
+        <div style={{ overflowX: 'hidden' }}>
             <Hero />
             <Journey />
             <Blog/>

@@ -21,8 +21,9 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "Username already taken" });
     }
 
-    // Create new user object
-    const newUser = new userModel({ email, username });
+    // Create new user object with normalized email
+    const normalizedEmail = email.toLowerCase().trim();
+    const newUser = new userModel({ email: normalizedEmail, username });
 
     // Register the user with hashed password
     const registeredUser = await userModel.register(newUser, password);
@@ -42,7 +43,13 @@ router.post("/signup", async (req, res) => {
         following: registeredUser.following,
         createdAt: registeredUser.createdAt
       };
-      return res.status(200).json({ message: "Welcome to Tasya!", user: safeUser });
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Signup successful but session failed" });
+        }
+        return res.status(200).json({ message: "Welcome to Tasya!", user: safeUser });
+      });
     });
   } catch (err) {
     console.error("Signup error:", err);
@@ -51,13 +58,40 @@ router.post("/signup", async (req, res) => {
 });
 
 // LOGIN ROUTE
-router.post("/login", (req, res, next) => {
+router.post("/login", async (req, res, next) => {
+  const { username } = req.body;
+  console.log("Login attempt with:", username);
+
+  // Check if the input is an email
+  if (username && username.includes("@")) {
+    try {
+      const emailQuery = username.trim();
+      console.log("Searching for user with email:", emailQuery);
+      // Case-insensitive search to support users registered before normalization
+      const userByEmail = await userModel.findOne({ 
+        email: { $regex: new RegExp(`^${emailQuery}$`, "i") } 
+      });
+      
+      if (userByEmail) {
+        console.log("User found by email, using username:", userByEmail.username);
+        req.body.username = userByEmail.username;
+      } else {
+        console.log("No user found with that email.");
+      }
+    } catch (err) {
+      console.error("Error finding user by email:", err);
+    }
+  }
+
   passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
+    if (err) {
+      console.error("Passport auth error:", err);
+      return next(err);
+    }
 
     if (!user) {
-      console.log("Login failed:", info.message); // Log failure reason
-      return res.status(401).json({ message: "Invalid credentials" });
+      console.log("Login failed info:", info);
+      return res.status(401).json({ message: info ? info.message : "Invalid credentials" });
     }
 
     req.login(user, (err) => {
@@ -66,8 +100,8 @@ router.post("/login", (req, res, next) => {
         return res.status(500).json({ message: "Login failed" });
       }
 
-      console.log("User logged in:", user); // 👈 Shows logged-in user in console
-      // Send only safe user data
+      console.log("User successfully logged in:", user.username);
+      
       const safeUser = {
         _id: user._id,
         username: user.username,
@@ -77,7 +111,13 @@ router.post("/login", (req, res, next) => {
         following: user.following,
         createdAt: user.createdAt
       };
-      return res.status(200).json({ message: "Login successful!", user: safeUser });
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error during login:", err);
+          return res.status(500).json({ message: "Login successful but session failed" });
+        }
+        return res.status(200).json({ message: "Login successful!", user: safeUser });
+      });
     });
   })(req, res, next);
 });
@@ -104,9 +144,12 @@ router.get("/logout", (req, res, next) => {
 
 
 router.get("/session-info", (req, res) => {
+  console.log("Session check - Is Authenticated:", req.isAuthenticated());
   if (req.isAuthenticated()) {
+    console.log("Session user:", req.user.username);
     return res.json({ user: req.user });
   } else {
+    console.log("Session - No authenticated user found.");
     return res.json({ user: null });
   }
 });
@@ -164,18 +207,24 @@ router.patch("/update", upload.fields([
 
 // FOLLOW USER
 router.post("/follow/:id", async (req, res) => {
-  if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+  if (!req.isAuthenticated()) {
+    console.log("Follow attempt blocked: Not authenticated");
+    return res.status(401).json({ message: "You must be logged in to follow users." });
+  }
   try {
-    if (req.user._id.toString() === req.params.id) {
+    const targetId = req.params.id;
+    const currentUserId = req.user._id;
+
+    if (currentUserId.toString() === targetId) {
       return res.status(400).json({ message: "Cannot follow yourself" });
     }
 
-    await userModel.findByIdAndUpdate(req.params.id, {
-      $addToSet: { followers: req.user._id }
+    await userModel.findByIdAndUpdate(targetId, {
+      $addToSet: { followers: currentUserId }
     });
     
-    await userModel.findByIdAndUpdate(req.user._id, {
-      $addToSet: { following: req.params.id }
+    await userModel.findByIdAndUpdate(currentUserId, {
+      $addToSet: { following: targetId }
     });
 
     res.json({ message: "Followed successfully" });
@@ -187,14 +236,20 @@ router.post("/follow/:id", async (req, res) => {
 
 // UNFOLLOW USER
 router.post("/unfollow/:id", async (req, res) => {
-  if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+  if (!req.isAuthenticated()) {
+    console.log("Unfollow attempt blocked: Not authenticated");
+    return res.status(401).json({ message: "You must be logged in to unfollow users." });
+  }
   try {
-    await userModel.findByIdAndUpdate(req.params.id, {
-      $pull: { followers: req.user._id }
+    const targetId = req.params.id;
+    const currentUserId = req.user._id;
+
+    await userModel.findByIdAndUpdate(targetId, {
+      $pull: { followers: currentUserId }
     });
     
-    await userModel.findByIdAndUpdate(req.user._id, {
-      $pull: { following: req.params.id }
+    await userModel.findByIdAndUpdate(currentUserId, {
+      $pull: { following: targetId }
     });
 
     res.json({ message: "Unfollowed successfully" });

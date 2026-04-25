@@ -18,6 +18,7 @@ import AddNewPost from './pages/Post/AddNewPost';
 import ProfileHero from './pages/userProfile/ProfileHero';
 import ChatBot from './pages/home/ChatBot';
 import { AuthProvider } from './pages/signup/AuthContext';
+import ScrollToTop from './pages/ScrollToTop';
 
 function App() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <ScrollToTop />
       {!hideNavAndFooter && <Navbar />}
 
       <Routes>

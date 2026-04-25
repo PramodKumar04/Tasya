@@ -37,7 +37,7 @@ router.post("/improve", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: "You are a professional blog editor. Improve the following blog post to be more engaging, clear, and professional. Maintain the original intent but enhance the vocabulary and flow. Return only the improved content."
+          content: "You are a professional blog editor. Improve the following blog post to be more engaging, clear, and professional. Maintain the original intent but enhance the vocabulary and flow. RETURN ONLY THE IMPROVED CONTENT IN HTML FORMAT. DO NOT use markdown symbols like '**' for bold. Use <b> or <strong> tags for bold, and <i> or <em> for italics if needed. The output should be ready to be rendered in a rich text editor."
         },
         {
           role: "user",
