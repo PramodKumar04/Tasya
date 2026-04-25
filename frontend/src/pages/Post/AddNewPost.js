@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../signup/AuthContext";
 
 export default function AddNewPost() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   const [postData, setPostData] = useState({
     title: "",
     content: "",
@@ -11,8 +21,7 @@ export default function AddNewPost() {
 
   const [fileInp, setFileInp] = useState({ image: null, video: null });
   const [uploading, setUploading] = useState(false);
-
-  const navigate = useNavigate();
+  const [improving, setImproving] = useState(false);
 
   useEffect(() => {
     const forms = document.querySelectorAll(".needs-validation");
@@ -108,6 +117,24 @@ export default function AddNewPost() {
     }
   };
 
+  const handleAIAssist = async () => {
+    if (!postData.content) return alert("Please write something first");
+    setImproving(true);
+    try {
+      const res = await axios.post("http://localhost:5000/api/ai/improve", {
+        content: postData.content,
+        title: postData.title
+      });
+      setPostData(prev => ({ ...prev, content: res.data.improvedContent }));
+      alert("Content improved by Tasya AI!");
+    } catch (err) {
+      console.error("AI Assist failed:", err);
+      alert("Failed to improve content.");
+    } finally {
+      setImproving(false);
+    }
+  };
+
   return (
     <div className="row">
       <div
@@ -140,17 +167,29 @@ export default function AddNewPost() {
             <label htmlFor="content" className="form-label">
               Content
             </label>
-            <textarea
-              className="form-control"
-              width="100%"
-              rows={10}
-              name="content"
-              id="content"
-              value={postData.content}
-              onChange={handleChange}
-              placeholder="Write your content..."
-              required
-            />
+            <div className="position-relative">
+              <textarea
+                className="form-control"
+                width="100%"
+                rows={10}
+                name="content"
+                id="content"
+                value={postData.content}
+                onChange={handleChange}
+                placeholder="Write your content..."
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-primary position-absolute bottom-0 end-0 m-2 d-flex align-items-center gap-1"
+                onClick={handleAIAssist}
+                disabled={improving}
+                title="AI Improve"
+              >
+                <span className="material-icons" style={{ fontSize: '18px' }}>auto_fix_high</span>
+                {improving ? "Improving..." : "AI Assist"}
+              </button>
+            </div>
             <div className="invalid-feedback">
               Please add something to your post
             </div>

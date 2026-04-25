@@ -15,6 +15,10 @@ const userSchema = new Schema({
         url:String,
         filename:String,
     },
+    backgroundImage: {
+        url: String,
+        filename: String,
+    },
     interests:[
         {
             type:String,

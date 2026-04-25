@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "./PostCard.css";
 
 export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f899" }) {
   const { _id, title, content, image, video, author, category, createdAt } = post;
@@ -30,17 +31,15 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
       return (
         <img
           src={image.url}
-          className="card-img-top card-img"
+          className="glass-img"
           alt={title}
-          style={{ height: "12rem", objectFit: "cover", width: "100%" }}
         />
       );
     } else if (video?.url) {
       return (
         <video
           src={video.url}
-          className="card-img-top card-img"
-          style={{ height: "12rem", objectFit: "cover", width: "100%" }}
+          className="glass-img"
           muted
           loop
           autoPlay
@@ -56,13 +55,14 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
       return (
         <div
           style={{
-            height: "12rem",
-            backgroundColor: "#f0f0f0",
+            height: "220px",
+            backgroundColor: "rgba(0,0,0,0.02)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            color: "#888",
+            color: "#8e8e93",
             fontStyle: "italic",
+            fontSize: "0.9rem"
           }}
         >
           No media available
@@ -72,59 +72,44 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
   };
 
   return (
-    <div className="card post-card" style={{ width: "18rem", marginBottom: "1rem" }}>
-      {renderMedia()}
+    <div className="glass-card">
+      <Link to={`/post/${_id}`} className="text-decoration-none">
+        <div className="glass-media-wrapper">
+          {renderMedia()}
+        </div>
+      </Link>
 
-      <div className="card-body">
-        <h5 className="card-title">
-          <b>{title}</b>
-        </h5>
+      <div className="glass-card-body">
+        <div className="d-flex justify-content-between align-items-center">
+           <span className="glass-category">{category}</span>
+           <span className="glass-date">{new Date(createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+        </div>
+        
+        <Link to={`/post/${_id}`} className="text-decoration-none">
+          <h5 className="glass-title">
+            {title}
+          </h5>
+        </Link>
 
-        <p
-          className="card-text"
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 1,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
+        <p className="glass-text">
           {content}
         </p>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div className="glass-footer">
           <button
             onClick={handleClick}
-            style={{
-              background: "none",
-              border: "none",
-              paddingRight: "7rem",
-              margin: "0",
-              cursor: "pointer",
-              color: liked ? "red" : "gray",
-              fontSize: "15px",
-            }}
+            className="glass-like-btn"
+            style={{ color: liked ? "#ff2d55" : "#8e8e93" }}
           >
-            <i
-              className={liked ? "fa-solid fa-heart" : "fa-regular fa-heart"}
-            ></i>{" "}
-            &nbsp;
-            <span style={{ color: "gray", fontSize: "15px" }}>{likes}</span>
+            <span className="material-icons glass-like-icon">{liked ? "favorite" : "favorite_border"}</span>
+            <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>{likes}</span>
           </button>
 
           <Link
-            to={`/post/${post._id}`}
-            style={{
-              border: "1px solid black",
-              textDecoration: "none",
-              textAlign: "center",
-              color: "black",
-              fontSize: "16px",
-              padding: "5px 10px",
-              borderRadius: "25px",
-            }}
+            to={`/post/${_id}`}
+            className="glass-read-btn"
           >
-            Read
+            Read More
           </Link>
         </div>
       </div>

@@ -63,14 +63,17 @@ export default function HomePage() {
 
         {loading && <p className="text-center">Searching...</p>}
 
-        <div className="row">
-          <div className="col-lg-11 col-md-8 col-sm-7 offset-lg-3 offset-md-1 offset-sm-0">
+        <div className="row mt-5">
+          <div className="col-12 text-center mb-4">
+            <h2 className="fw-bold display-6">Latest Sparks</h2>
+            <p className="text-muted">Discover what's trending in the Tasya community</p>
+          </div>
+          <div className="col-12 px-md-5">
             <Posting posts={posts} />
           </div>
-          <div className="col-lg-1 col-md-3 col-sm-3">
-            <AddButton />
-          </div>
         </div>
+
+        <AddButton />
 
         <br /><br />
       </div>

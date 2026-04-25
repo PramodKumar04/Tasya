@@ -83,43 +83,52 @@ export default function PostDetails() {
       style={{ marginTop: "8rem", marginBottom: "8rem" }}
     >
       <div className="row">
-        <div className="col-lg-9 col-md-12" style={{ padding: "20px" }}>
-          <h1>
-            <b>{title}</b>
+        <div className="col-lg-8 offset-lg-1 col-md-12 bg-white p-4 p-md-5 rounded-4 shadow-sm" style={{ border: '1px solid #f0f0f0' }}>
+          <h1 className="display-4 fw-bold mb-3" style={{ color: '#1a1a1a' }}>
+            {title}
           </h1>
-          <h4 style={{ fontSize: "20px" }}>
-            <b>Created By: {author?.fullName || "Unknown Author"}</b>
-          </h4>
-          <h6 style={{ marginBottom: "2rem" }}>
-            Created At: {new Date(createdAt).toLocaleString()}
-          </h6>
+          
+          <div className="d-flex align-items-center gap-3 mb-4">
+             <div className="material-icons text-primary" style={{ fontSize: '40px' }}>account_circle</div>
+             <div>
+                <h6 className="mb-0 fw-bold">By {author?.username || author?.fullName || "Anonymous"}</h6>
+                <small className="text-muted">{new Date(createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</small>
+             </div>
+          </div>
+
+          <hr className="my-4" style={{ opacity: 0.1 }} />
 
           {/* Render media */}
-          {renderMedia()}
+          <div className="media-container mb-5 shadow-sm rounded-4 overflow-hidden">
+            {renderMedia()}
+          </div>
 
-          <div style={{ fontSize: "1.2rem" }}>
+          <div className="post-content" style={{ fontSize: "1.25rem", lineHeight: "1.8", color: "#333" }}>
             {content.split("\n").map((para, index) => (
-              <p key={index} style={{ marginBottom: "1rem" }}>
+              <p key={index} className="mb-4">
                 {para}
               </p>
             ))}
           </div>
         </div>
 
-        <div className="col-lg-3 col-md-12" style={{ padding: "20px" }}>
-          <h3 style={{ fontSize: "25px" }}>
-            &nbsp;<b>#Trending</b>
-          </h3>
-          <div style={{ marginTop: "2rem" }}>
-            {trending.length > 0 ? (
-              trending.map((post) => (
-                <div key={post._id} style={{ marginBottom: "1rem" }}>
-                  <PostCard post={post} />
-                </div>
-              ))
-            ) : (
-              <p>No trending posts available.</p>
-            )}
+        <div className="col-lg-3 col-md-12 mt-5 mt-lg-0">
+          <div className="sticky-top" style={{ top: '100px' }}>
+            <h4 className="fw-bold mb-4 d-flex align-items-center gap-2">
+              <span className="material-icons text-warning">trending_up</span>
+              Trending
+            </h4>
+            <div className="trending-list">
+              {trending.length > 0 ? (
+                trending.map((post) => (
+                  <div key={post._id} className="mb-4">
+                    <PostCard post={post} />
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted">Stay tuned for trending stories.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

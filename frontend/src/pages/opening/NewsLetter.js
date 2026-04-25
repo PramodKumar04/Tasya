@@ -1,7 +1,9 @@
 import React from "react";
 import{Link} from 'react-router-dom';
+import { useAuth } from '../signup/AuthContext';
 
 function NewsLetter() {
+  const { user } = useAuth();
   return (
     <div className="container">
       <div className="row">
@@ -24,7 +26,7 @@ function NewsLetter() {
             built-in analytics, you can track engagement, connect with your
             audience, and elevate your content strategy.
           </p>
-          <Link to="/signup">
+          <Link to={user ? "/home" : "/signup"}>
             <button
               className="btn btn-primary mt-5"
               style={{
@@ -33,7 +35,7 @@ function NewsLetter() {
                 backgroundColor: "#6C5CE7",
               }}
             >
-              Get Started
+              {user ? "Go to Home" : "Get Started"}
             </button>
           </Link>
         </div>

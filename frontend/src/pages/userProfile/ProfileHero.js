@@ -17,14 +17,11 @@ export default function HomePage() {
                     </div>
 
 
-                    <div className="col-lg-11 col-md-8 col-sm-7 offset-lg-1.5 offset-md-1 offset-sm-0">
+                    <div className="col-12 px-md-5">
                         <Posting />
                     </div>
-                    <div className="col-lg-1 col-md-3 col-sm-3">
-                        <AddButton/>
-                    </div>
-                
                 </div>
+                <AddButton/>
                 <br/><br/>
             </div>
         </div>

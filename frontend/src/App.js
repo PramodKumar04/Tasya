@@ -16,6 +16,7 @@ import HomePage from './pages/home/HomePage';
 import PostDetails from './pages/Post/PostDetails';
 import AddNewPost from './pages/Post/AddNewPost';
 import ProfileHero from './pages/userProfile/ProfileHero';
+import ChatBot from './pages/home/ChatBot';
 import { AuthProvider } from './pages/signup/AuthContext';
 
 function App() {
@@ -36,10 +37,12 @@ function App() {
         <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/create" element={<AddNewPost />} />
+        <Route path="/profile/:username" element={<ProfileHero/>} />
         <Route path="/profile" element={<ProfileHero/>} />
 
       </Routes>
 
+      <ChatBot />
       {!hideNavAndFooter && <Footer />}
       <ToastContainer position="top-center" />
     </AuthProvider>

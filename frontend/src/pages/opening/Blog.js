@@ -1,6 +1,8 @@
 import React from "react";
 import {Link} from 'react-router-dom';
+import { useAuth } from '../signup/AuthContext';
 function Blog() {
+  const { user } = useAuth();
   return (
     <div
       className="container-fluid p-5 mt-5 mb-5"
@@ -36,7 +38,7 @@ function Blog() {
             to share your journey? Let your voice be heard and connect with
             readers around the world.
           </p>
-          <Link to="/signup">
+          <Link to={user ? "/home" : "/signup"}>
             <button
               className="btn btn-primary mt-5"
               style={{
@@ -45,7 +47,7 @@ function Blog() {
                 backgroundColor: "#6C5CE7",
               }}
             >
-              Get Started
+              {user ? "Go to Home" : "Get Started"}
             </button>
           </Link>
         </div>

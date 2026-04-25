@@ -1,7 +1,9 @@
 import React from "react";
 import {Link} from 'react-router-dom';
+import { useAuth } from '../signup/AuthContext';
 
 function Journey() {
+  const { user } = useAuth();
   return (
     <div className="container mt-5 p-5 mb-5">
       <div className="row">
@@ -27,7 +29,7 @@ function Journey() {
             presence.
           </p>
           
-          <Link to="/signup">
+          <Link to={user ? "/home" : "/signup"}>
             <button
               className="btn btn-primary mt-5"
               style={{
@@ -36,7 +38,7 @@ function Journey() {
                 backgroundColor: "#6C5CE7",
               }}
             >
-              Get Started
+              {user ? "Go to Home" : "Get Started"}
             </button>
           </Link>
         </div>

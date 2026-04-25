@@ -19,6 +19,10 @@ router.post("/posts", upload.fields([
   { name: "image", maxCount: 1 },
   { name: "video", maxCount: 1 }
 ]), async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "You must be logged in to create a post." });
+  }
+
   const { title, content, category } = req.body;
 
   try {
@@ -26,7 +30,7 @@ router.post("/posts", upload.fields([
     console.log("FILES:", req.files);
 
     const newPost = new postModel({
-      author: "68735376fb9864bffdb5f899",
+      author: req.user._id,
       title,
       content,
       category,

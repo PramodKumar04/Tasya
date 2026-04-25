@@ -36,11 +36,11 @@ const upload = multer({
         fileSize: 50 * 1024 * 1024, 
     },
     fileFilter: (req, file, cb) => {
-        if (file.fieldname === 'image') {
+        if (['image', 'profileImage', 'backgroundImage'].includes(file.fieldname)) {
             if (file.mimetype.startsWith('image/')) {
                 cb(null, true);
             } else {
-                cb(new Error('Only image files are allowed for image field'));
+                cb(new Error('Only image files are allowed'));
             }
         } else if (file.fieldname === 'video') {
             if (file.mimetype.startsWith('video/')) {

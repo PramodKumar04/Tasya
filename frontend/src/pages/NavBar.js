@@ -4,6 +4,7 @@ import axios from "axios";
 import { useAuth } from "./signup/AuthContext";
 import { toast,ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserSearchBar from "./UserSearchBar";
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -86,14 +87,28 @@ function NavBar() {
                 </Link>
               </li>
 
+              {/* Add Search Bar */}
+              <li className="nav-item d-flex align-items-center ms-md-3 me-md-3">
+                <UserSearchBar />
+              </li>
+
               {user ? (
                 <>
                   <li className="nav-item">
 
 
-                   <Link className="nav-link" to="/profile">
-
-                      Welcome {user.username}
+                    <Link className="nav-link d-flex align-items-center gap-2" to="/profile">
+                      {user.profileImage?.url ? (
+                        <img 
+                          src={user.profileImage.url} 
+                          alt="profile" 
+                          className="rounded-circle shadow-sm"
+                          style={{ width: "32px", height: "32px", objectFit: "cover", border: "1px solid #ddd" }} 
+                        />
+                      ) : (
+                        <span className="material-icons text-secondary" style={{ fontSize: "32px" }}>account_circle</span>
+                      )}
+                      <span className="fw-bold text-dark">{user.username}</span>
                     </Link>
                   </li>
                   <li className="nav-item">

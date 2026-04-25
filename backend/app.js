@@ -18,6 +18,7 @@ const { userModel } = require("./models/User.js");
 
 const postRouter = require('./routes/Posts');
 const userRouter = require('./routes/Users.js');
+const aiRouter = require('./routes/AI.js');
 
 const sessionOptions={secret:"tasyasecret", resave:false,saveUninitialized:false,
                       cookie:{
@@ -28,10 +29,7 @@ const sessionOptions={secret:"tasyasecret", resave:false,saveUninitialized:false
 };
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Atlas connected"))
 .catch(err => console.error("MongoDB connection error:", err));
 
@@ -57,6 +55,7 @@ app.use(flash());
 // Routes
 app.use('/api', postRouter);
 app.use('/api/users', userRouter);
+app.use('/api/ai', aiRouter);
 
 // REMOVED THE DUPLICATE /api/session-info ROUTE
 // It's now handled in the userRouter
