@@ -201,7 +201,7 @@ export default function ProfilePage() {
               <small className="text-muted">Following</small>
             </div>
             <div className="text-center">
-              <h5 className="mb-0 fw-bold">--</h5>
+              <h5 className="mb-0 fw-bold">{profileUser.postCount || 0}</h5>
               <small className="text-muted">Posts</small>
             </div>
           </div>

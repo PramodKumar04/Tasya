@@ -160,9 +160,20 @@ router.get("/profile/:username", async (req, res) => {
     const user = await userModel.findOne({ username: req.params.username })
       .populate("followers", "username profileImage")
       .populate("following", "username profileImage");
+    
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
+
+    // Count posts by this user
+    const postModel = require("../schema/Posts"); // Import here to avoid circular dependencies if any
+    const postCount = await postModel.countDocuments({ author: user._id });
+
+    // Create a plain object to add extra fields
+    const userObj = user.toObject();
+    userObj.postCount = postCount;
+
+    res.json(userObj);
   } catch (err) {
+    console.error("Error fetching profile:", err);
     res.status(500).json({ message: "Error fetching profile" });
   }
 });

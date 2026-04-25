@@ -245,4 +245,33 @@ router.delete("/comment/:commentId", async (req, res) => {
   }
 });
 
+// PATCH: Like/Unlike a comment
+router.patch("/comment/:commentId/like", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "You must be logged in to like comments." });
+  }
+
+  try {
+    const comment = await commentModel.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    const currentUserId = req.user._id;
+    const alreadyLiked = comment.likedBy.includes(currentUserId);
+
+    if (alreadyLiked) {
+      comment.likes = Math.max(0, (comment.likes || 1) - 1);
+      comment.likedBy.pull(currentUserId);
+    } else {
+      comment.likes = (comment.likes || 0) + 1;
+      comment.likedBy.push(currentUserId);
+    }
+
+    await comment.save();
+    res.json({ likes: comment.likes, liked: !alreadyLiked });
+  } catch (err) {
+    console.error("Error liking comment:", err);
+    res.status(500).json({ message: "Error liking comment" });
+  }
+});
+
 module.exports = router;

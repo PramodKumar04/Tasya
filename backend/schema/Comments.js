@@ -18,8 +18,18 @@ const commentSchema = new Schema({
     },
     createdAt:{
         type:Date,
-        default: Date.now()
-    }
+        default: Date.now
+    },
+    likes: {
+        type: Number,
+        default: 0
+    },
+    likedBy: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ]
 });
 
 const Comments = mongoose.model('Comments', commentSchema);

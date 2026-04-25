@@ -75,6 +75,23 @@ export default function PostDetails() {
     }
   };
 
+  const handleLikeComment = async (commentId) => {
+    if (!user) return alert("Please log in to like comments");
+    
+    try {
+      const res = await axios.patch(
+        `https://tasya.onrender.com/api/comment/${commentId}/like`,
+        {},
+        { withCredentials: true }
+      );
+      setComments(comments.map(c => 
+        c._id === commentId ? { ...c, likes: res.data.likes, likedBy: res.data.liked ? [...(c.likedBy || []), user._id] : (c.likedBy || []).filter(id => id !== user._id) } : c
+      ));
+    } catch (err) {
+      console.error("Error liking comment:", err);
+    }
+  };
+
   if (!post)
     return <div style={{ padding: "2rem" }}>Loading post details...</div>;
 
@@ -251,6 +268,19 @@ export default function PostDetails() {
                         </span>
                       </h6>
                       <p className="mb-0 text-dark" style={{ whiteSpace: 'pre-wrap' }}>{comment.content}</p>
+                      
+                      <div className="d-flex align-items-center gap-3 mt-2">
+                        <button 
+                          onClick={() => handleLikeComment(comment._id)}
+                          className="btn btn-sm d-flex align-items-center gap-1 p-0 border-0"
+                          style={{ color: comment.likedBy?.includes(user?._id) ? "#ff2d55" : "#8e8e93" }}
+                        >
+                          <span className="material-icons" style={{ fontSize: '18px' }}>
+                            {comment.likedBy?.includes(user?._id) ? "favorite" : "favorite_border"}
+                          </span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{comment.likes || 0}</span>
+                        </button>
+                      </div>
                     </div>
                     {user && (comment.author?._id === user._id || comment.author === user._id) && (
                       <button 
