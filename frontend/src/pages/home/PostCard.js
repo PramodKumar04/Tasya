@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useAuth } from "../signup/AuthContext";
 import "./PostCard.css";
 
-export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f899" }) {
+export default function PostCard({ post }) {
+  const { user } = useAuth();
+  const currentUserId = user?._id;
   const { _id, title, content, image, video, author, category, createdAt } = post;
 
   // Likes and liked state (local to this card)
@@ -98,7 +101,9 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
         </Link>
 
         <p className="glass-text">
-          {stripHtml(content)}
+          {stripHtml(content).length > 150 
+            ? stripHtml(content).substring(0, 150) + "..." 
+            : stripHtml(content)}
         </p>
 
         <div className="glass-footer">

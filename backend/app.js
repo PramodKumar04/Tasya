@@ -4,6 +4,9 @@ require("dotenv").config({ override: true });
 
 const express = require('express');
 const app = express();
+
+// Trust proxy for session cookies in production (Render, Heroku, etc.)
+app.set('trust proxy', 1);
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require("express-session");
@@ -19,12 +22,18 @@ const postRouter = require('./routes/Posts');
 const userRouter = require('./routes/Users.js');
 const aiRouter = require('./routes/AI.js');
 
-const sessionOptions={secret:"tasyasecret", resave:false,saveUninitialized:false,
-                      cookie:{
-                        expires: Date.now()+7*24*60*60*1000,
-                        maxAge: 7*24*60*60*1000,
-                        httpOnly: true
-                      }
+const sessionOptions = {
+  secret: process.env.SESSION_SECRET || "tasyasecret",
+  resave: false,
+  saveUninitialized: false,
+  proxy: true, // Required for secure cookies behind a proxy
+  cookie: {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production" ? true : false,
+  }
 };
 
 // Connect to MongoDB

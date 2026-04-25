@@ -166,13 +166,31 @@ export default function PostDetails() {
 
           <div 
             className="post-content" 
-            style={{ fontSize: "1.25rem", lineHeight: "1.8", color: "#333" }}
-            dangerouslySetInnerHTML={{ 
-              __html: /<[a-z][\s\S]*>/i.test(content) 
-                ? DOMPurify.sanitize(content) 
-                : DOMPurify.sanitize(content.replace(/\n/g, '<br />')) 
-            }}
-          />
+            style={{ fontSize: "1.25rem", lineHeight: "1.8", color: "#333", position: 'relative' }}
+          >
+            <div
+              dangerouslySetInnerHTML={{ 
+                __html: /<[a-z][\s\S]*>/i.test(user ? content : content.substring(0, 300)) 
+                  ? DOMPurify.sanitize(user ? content : content.substring(0, 300)) 
+                  : DOMPurify.sanitize((user ? content : content.substring(0, 300)).replace(/\n/g, '<br />')) 
+              }}
+            />
+            
+            {!user && content.length > 300 && (
+              <div className="mt-4 p-4 rounded-4 text-center" style={{ 
+                background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,1))',
+                marginTop: '-50px',
+                paddingTop: '60px',
+                position: 'relative',
+                zIndex: 1
+              }}>
+                <p className="mb-3 fw-bold">Login to continue reading this post</p>
+                <a href="/login" className="btn btn-primary px-5 rounded-pill shadow-sm">
+                  Login to Tasya
+                </a>
+              </div>
+            )}
+          </div>
 
           <hr className="my-5" style={{ opacity: 0.1 }} />
 
