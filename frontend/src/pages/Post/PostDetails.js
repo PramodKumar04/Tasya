@@ -167,7 +167,11 @@ export default function PostDetails() {
           <div 
             className="post-content" 
             style={{ fontSize: "1.25rem", lineHeight: "1.8", color: "#333" }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+            dangerouslySetInnerHTML={{ 
+              __html: /<[a-z][\s\S]*>/i.test(content) 
+                ? DOMPurify.sanitize(content) 
+                : DOMPurify.sanitize(content.replace(/\n/g, '<br />')) 
+            }}
           />
 
           <hr className="my-5" style={{ opacity: 0.1 }} />
