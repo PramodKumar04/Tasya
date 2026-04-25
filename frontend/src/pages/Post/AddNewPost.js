@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../signup/AuthContext";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import api from "../../api";
 
 export default function AddNewPost() {
   const { user } = useAuth();
@@ -112,11 +112,10 @@ export default function AddNewPost() {
     }
 
     try {
-      const response = await axios.post("https://tasya.onrender.com/api/posts", formData, {
+      const response = await api.post("/posts", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true,
         timeout: 300000, // 5 minutes timeout for large files
       });
 
@@ -141,7 +140,7 @@ export default function AddNewPost() {
     if (!postData.content) return alert("Please write something first");
     setImproving(true);
     try {
-      const res = await axios.post("https://tasya.onrender.com/api/ai/improve", {
+      const res = await api.post("/ai/improve", {
         content: postData.content,
         title: postData.title
       });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import "./ChatBot.css";
+import api from "../../api";
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function ChatBot() {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://tasya.onrender.com/api/ai/chat", {
+      const res = await api.post("/ai/chat", {
         message,
         history: history.slice(-5) // Send last 5 messages for context
       });

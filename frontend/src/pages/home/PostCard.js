@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useAuth } from "../signup/AuthContext";
 import "./PostCard.css";
+import api from "../../api";
 
 export default function PostCard({ post }) {
   const { user } = useAuth();
   const currentUserId = user?._id;
-  const { _id, title, content, image, video, author, category, createdAt } = post;
+  const { _id, title, content, image, video, category, createdAt } = post;
 
   // Likes and liked state (local to this card)
   const [likes, setLikes] = useState(post.likes || 0);
@@ -21,11 +21,7 @@ export default function PostCard({ post }) {
 
   const handleClick = async () => {
     try {
-      const res = await axios.patch(
-        `https://tasya.onrender.com/api/post/${_id}/like`,
-        {},
-        { withCredentials: true }
-      );
+      const res = await api.patch(`/post/${_id}/like`, {});
       setLikes(res.data.likes);
       setLiked(res.data.liked);
     } catch (err) {

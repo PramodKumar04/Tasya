@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./AuthPage.css";
 import NavBar from "../NavBar";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; 
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../../api";
 
 
 const AuthPage = () => {
@@ -22,7 +22,7 @@ const AuthPage = () => {
   });
 
   const navigate = useNavigate();
-  const { setUser } = useAuth(); 
+  const { setUser, fetchUser } = useAuth(); 
 
   useEffect(() => {
     const forms = document.querySelectorAll(".needs-validation");
@@ -59,16 +59,13 @@ const AuthPage = () => {
   event.preventDefault();
   setLoading(true);
   try {
-    const response = await axios.post(
-      "https://tasya.onrender.com/api/users/signup",
-      signupForm,
-      { withCredentials: true }
-    );
+    const response = await api.post("/users/signup", signupForm);
 
     toast.dismiss(); // Clear any existing toasts
     toast.success(response.data.message || "Signup successful!");
 
-    setUser(response.data.user || { username: signupForm.username });
+    const sessionUser = await fetchUser();
+    setUser(sessionUser || response.data.user || null);
 
     navigate("/home");
 
@@ -88,16 +85,13 @@ const AuthPage = () => {
   event.preventDefault();
   setLoading(true);
   try {
-    const response = await axios.post(
-      "https://tasya.onrender.com/api/users/login",
-      loginForm,
-      { withCredentials: true }
-    );
+    const response = await api.post("/users/login", loginForm);
 
     toast.dismiss(); // Clear any existing toasts
     toast.success(response.data.message || "Login successful!");
 
-    setUser(response.data.user || { username: loginForm.username });
+    const sessionUser = await fetchUser();
+    setUser(sessionUser || response.data.user || null);
 
     setLoginForm({ username: "", password: "" });
     navigate("/home");

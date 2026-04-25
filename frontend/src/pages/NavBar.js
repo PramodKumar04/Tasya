@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "./signup/AuthContext";
-import { toast,ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserSearchBar from "./UserSearchBar";
+import api from "../api";
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
-  const { user, setUser, fetchUser } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,9 +22,7 @@ function NavBar() {
 
   const handleLogout = async () => {
   try {
-    await axios.get("https://tasya.onrender.com/api/users/logout", {
-      withCredentials: true,
-    });
+    await api.get("/users/logout");
     setUser(null);
     toast.success("Logout successful!", { autoClose: 2000 });
     navigate("/");

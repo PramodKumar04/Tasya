@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import PostCard from "../home/PostCard";
 import DOMPurify from "dompurify";
 import { useAuth } from "../signup/AuthContext";
+import api from "../../api";
 
 export default function PostDetails() {
   const { id } = useParams();
@@ -14,8 +14,8 @@ export default function PostDetails() {
   const { user } = useAuth();
 
   useEffect(() => {
-    axios
-      .get("https://tasya.onrender.com/api/posts")
+    api
+      .get("/posts")
       .then((res) => {
         console.log("Posts fetched successfully:", res.data);
         setPosts(res.data);
@@ -26,16 +26,16 @@ export default function PostDetails() {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`https://tasya.onrender.com/api/post/${id}`)
+    api
+      .get(`/post/${id}`)
       .then((res) => {
         console.log("Fetched post:", res.data);
         setPost(res.data);
       })
       .catch((err) => console.error("Error fetching post:", err));
 
-    axios
-      .get(`https://tasya.onrender.com/api/post/${id}/comments`)
+    api
+      .get(`/post/${id}/comments`)
       .then((res) => {
         setComments(res.data);
       })
@@ -47,11 +47,7 @@ export default function PostDetails() {
     if (!newComment.trim()) return;
     
     try {
-      const res = await axios.post(
-        `https://tasya.onrender.com/api/post/${id}/comment`,
-        { content: newComment },
-        { withCredentials: true } // Assuming auth uses cookies/sessions
-      );
+      const res = await api.post(`/post/${id}/comment`, { content: newComment });
       setComments([res.data.comment, ...comments]);
       setNewComment("");
     } catch (err) {
@@ -64,10 +60,7 @@ export default function PostDetails() {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
     
     try {
-      await axios.delete(
-        `https://tasya.onrender.com/api/comment/${commentId}`,
-        { withCredentials: true }
-      );
+      await api.delete(`/comment/${commentId}`);
       setComments(comments.filter(c => c._id !== commentId));
     } catch (err) {
       console.error("Error deleting comment:", err);
@@ -79,11 +72,7 @@ export default function PostDetails() {
     if (!user) return alert("Please log in to like comments");
     
     try {
-      const res = await axios.patch(
-        `https://tasya.onrender.com/api/comment/${commentId}/like`,
-        {},
-        { withCredentials: true }
-      );
+      const res = await api.patch(`/comment/${commentId}/like`, {});
       setComments(comments.map(c => 
         c._id === commentId ? { ...c, likes: res.data.likes, likedBy: res.data.liked ? [...(c.likedBy || []), user._id] : (c.likedBy || []).filter(id => id !== user._id) } : c
       ));

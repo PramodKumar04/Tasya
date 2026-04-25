@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import SearchBar from "./SearchBar.js";
 import NavBar from "../NavBar.js";
 import Hero from "./HomeHero.js";
 import Posting from "./Posting.js";
 import AddButton from "./AddButton.js";
+import api from "../../api";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -18,7 +18,7 @@ export default function HomePage() {
   const fetchAllPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://tasya.onrender.com/api/posts");
+      const res = await api.get("/posts");
       setPosts(res.data);
     } catch (error) {
       console.error("Failed to fetch posts:", error);
@@ -37,9 +37,7 @@ export default function HomePage() {
       return;
     }
 
-    const res = await axios.get(
-      `https://tasya.onrender.com/api/posts/search?q=${query}`
-    );
+    const res = await api.get(`/posts/search?q=${query}`);
     setPosts(res.data);
   } catch (error) {
     console.error("Search failed:", error);

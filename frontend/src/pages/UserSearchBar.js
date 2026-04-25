@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import './UserSearchBar.css';
+import api from '../api';
 
 export default function UserSearchBar() {
   const [query, setQuery] = useState('');
@@ -38,7 +38,7 @@ export default function UserSearchBar() {
   const searchUsers = async (searchQuery) => {
     setLoading(true);
     try {
-      const res = await axios.get(`https://tasya.onrender.com/api/users/search?q=${searchQuery}`);
+      const res = await api.get(`/users/search?q=${searchQuery}`);
       setResults(res.data);
       setIsOpen(true);
     } catch (err) {

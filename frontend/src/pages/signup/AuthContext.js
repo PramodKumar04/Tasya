@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.js
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api";
 
 const AuthContext = createContext();
 
@@ -9,13 +9,13 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("https://tasya.onrender.com/api/users/session-info", {
-        withCredentials: true,
-      });
+      const res = await api.get("/users/session-info");
       setUser(res.data.user);
+      return res.data.user;
     } catch (err) {
       console.error("Failed to fetch session:", err);
       setUser(null);
+      return null;
     }
   };
 

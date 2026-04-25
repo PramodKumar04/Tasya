@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../signup/AuthContext";
 import { toast } from "react-toastify";
+import api from "../../api";
 
 export default function ProfilePage() {
   const { username: paramUsername } = useParams();
@@ -19,19 +19,10 @@ export default function ProfilePage() {
   const isOwnProfile = !paramUsername || (currentUser && currentUser.username === paramUsername);
   const effectiveUsername = paramUsername || (currentUser && currentUser.username);
 
-  useEffect(() => {
-    if (effectiveUsername) {
-      fetchProfile();
-    } else if (paramUsername === undefined && currentUser === null) {
-      // If we are on /profile but not logged in, stop loading
-      setLoading(false);
-    }
-  }, [effectiveUsername, currentUser]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`https://tasya.onrender.com/api/users/profile/${effectiveUsername}`);
+      const res = await api.get(`/users/profile/${effectiveUsername}`);
       setProfileUser(res.data);
     } catch (err) {
       console.error("Error fetching profile:", err);
@@ -39,7 +30,16 @@ export default function ProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [effectiveUsername]);
+
+  useEffect(() => {
+    if (effectiveUsername) {
+      fetchProfile();
+    } else if (paramUsername === undefined && currentUser === null) {
+      // If we are on /profile but not logged in, stop loading
+      setLoading(false);
+    }
+  }, [effectiveUsername, currentUser, paramUsername, fetchProfile]);
 
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
@@ -50,9 +50,8 @@ export default function ProfilePage() {
 
     try {
       setUploading(true);
-      await axios.patch("https://tasya.onrender.com/api/users/update", formData, {
+      await api.patch("/users/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true
       });
       toast.success(`${type === 'profileImage' ? 'Profile' : 'Cover'} photo updated!`);
       await fetchProfile();
@@ -66,9 +65,7 @@ export default function ProfilePage() {
 
   const handleBioSave = async () => {
     try {
-      await axios.patch("https://tasya.onrender.com/api/users/update", { bio: newBio }, {
-        withCredentials: true
-      });
+      await api.patch("/users/update", { bio: newBio });
       toast.success("Bio updated!");
       setEditingBio(false);
       fetchProfile();
@@ -83,7 +80,7 @@ export default function ProfilePage() {
     try {
       const isFollowing = profileUser.followers.some(f => String(f._id) === String(currentUser._id));
       const endpoint = isFollowing ? 'unfollow' : 'follow';
-      await axios.post(`https://tasya.onrender.com/api/users/${endpoint}/${profileUser._id}`, {}, { withCredentials: true });
+      await api.post(`/users/${endpoint}/${profileUser._id}`, {});
       toast.success(isFollowing ? "Unfollowed" : "Following");
       fetchProfile();
     } catch (err) {

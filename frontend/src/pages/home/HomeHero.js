@@ -1,12 +1,12 @@
 import "./HomePage.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api";
 
 export default function Hero() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    axios.get("https://tasya.onrender.com/api/posts")
+    api.get("/posts")
       .then(res => {
         console.log("Posts fetched successfully:", res.data);
         setPosts(res.data);

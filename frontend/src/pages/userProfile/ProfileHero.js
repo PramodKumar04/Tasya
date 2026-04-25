@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../signup/AuthContext';
 import Posting from '../home/Posting.js';
 import AddButton from '../home/AddButton.js';
 import ProfilePage from './ProfilePage.js';
+import api from '../../api';
 
 export default function ProfileHero() {
     const { username: paramUsername } = useParams();
@@ -13,20 +13,20 @@ export default function ProfileHero() {
 
     const effectiveUsername = paramUsername || (currentUser && currentUser.username);
 
-    useEffect(() => {
-        if (effectiveUsername) {
-            fetchUserPosts();
-        }
-    }, [effectiveUsername]);
-
-    const fetchUserPosts = async () => {
+    const fetchUserPosts = useCallback(async () => {
         try {
-            const res = await axios.get(`https://tasya.onrender.com/api/posts/user/${effectiveUsername}`);
+            const res = await api.get(`/posts/user/${effectiveUsername}`);
             setUserPosts(res.data);
         } catch (error) {
             console.error("Failed to fetch user posts:", error);
         }
-    };
+    }, [effectiveUsername]);
+
+    useEffect(() => {
+        if (effectiveUsername) {
+            fetchUserPosts();
+        }
+    }, [effectiveUsername, fetchUserPosts]);
 
     return (
         <div>

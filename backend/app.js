@@ -53,16 +53,14 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Middlewares
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow any origin that is on render.com or localhost
-    if (!origin || origin.endsWith('onrender.com') || origin.includes('localhost')) {
-      callback(null, true);
-    } else {
-      console.log("CORS blocked origin:", origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+  origin: [
+    'http://localhost:3000',
+    'https://tasya-creativehub.onrender.com',
+    'https://tasya.onrender.com'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,8 +69,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
+  // Relax cookie security if request comes from localhost
+  const origin = req.get('origin');
+  if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+    if (req.session && req.session.cookie) {
+      req.session.cookie.secure = false;
+      req.session.cookie.sameSite = 'lax';
+    }
+  }
+
   if (req.url.startsWith('/api')) {
     console.log(`${req.method} ${req.url} - Auth: ${req.isAuthenticated()} - User: ${req.user ? req.user.username : 'none'}`);
+    if (req.headers.cookie) console.log("Cookies present:", req.headers.cookie.substring(0, 30) + "...");
   }
   next();
 });
