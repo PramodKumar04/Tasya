@@ -29,6 +29,7 @@ const sessionOptions = {
   resave: true, // Recommended for MemoryStore to keep sessions alive
   saveUninitialized: false,
   proxy: true,
+  rolling: true, // Force cookie to be set on every response
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
