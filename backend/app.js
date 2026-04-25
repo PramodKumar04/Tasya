@@ -22,20 +22,27 @@ const postRouter = require('./routes/Posts');
 const userRouter = require('./routes/Users.js');
 const aiRouter = require('./routes/AI.js');
 
-const isProduction = process.env.NODE_ENV === "production";
+console.log("Environment:", process.env.NODE_ENV || "development");
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "tasyasecret",
-  resave: false,
+  resave: true, // Recommended for MemoryStore to keep sessions alive
   saveUninitialized: false,
   proxy: true,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: isProduction ? "none" : "lax",
-    secure: isProduction,
+    sameSite: "none",
+    secure: true,
   }
 };
+
+// Adjust for local development
+if (process.env.NODE_ENV !== "production") {
+  sessionOptions.cookie.secure = false;
+  sessionOptions.cookie.sameSite = "lax";
+  sessionOptions.proxy = false;
+}
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
