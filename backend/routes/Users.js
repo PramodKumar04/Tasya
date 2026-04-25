@@ -164,7 +164,7 @@ router.get("/profile/:username", async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     // Count posts by this user
-    const postModel = require("../schema/Posts"); // Import here to avoid circular dependencies if any
+    const { postModel } = require("../models/Posts"); 
     const postCount = await postModel.countDocuments({ author: user._id });
 
     // Create a plain object to add extra fields

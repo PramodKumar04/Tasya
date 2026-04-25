@@ -31,4 +31,4 @@ postSchema.index({
 });
 
 
-module.exports = postSchema;
+module.exports = mongoose.model("Post", postSchema);

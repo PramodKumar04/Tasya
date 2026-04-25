@@ -22,17 +22,18 @@ const postRouter = require('./routes/Posts');
 const userRouter = require('./routes/Users.js');
 const aiRouter = require('./routes/AI.js');
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "tasyasecret",
   resave: false,
   saveUninitialized: false,
-  proxy: true, // Required for secure cookies behind a proxy
+  proxy: true,
   cookie: {
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
-    secure: process.env.NODE_ENV === "development" ? false : true,
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   }
 };
 

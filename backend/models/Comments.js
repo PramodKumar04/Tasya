@@ -1,6 +1,2 @@
-const { model } = require("mongoose");
-const { commentSchema } = require("../schema/Comments.js");
-
-const commentModel = model("Comments", commentSchema);
-
+const commentModel = require("../schema/Comments.js");
 module.exports = { commentModel };
