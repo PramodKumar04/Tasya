@@ -24,17 +24,19 @@ const aiRouter = require('./routes/AI.js');
 
 console.log("Environment:", process.env.NODE_ENV || "development");
 
+const isProduction = process.env.NODE_ENV === "production" || process.env.RENDER === "true";
+
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "tasyasecret",
-  resave: false,
+  resave: true,
   saveUninitialized: false,
-  proxy: true,
-  rolling: true,
+  proxy: isProduction,
+  rolling: false,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   }
 };
 
@@ -48,8 +50,8 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://tasya-creativehub.onrender.com',
-    'https://tasya.onrender.com'
+    'http://127.0.0.1:3000',
+    'https://tasya-creativehub.onrender.com'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
