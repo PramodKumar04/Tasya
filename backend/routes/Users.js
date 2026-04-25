@@ -101,6 +101,7 @@ router.post("/login", async (req, res, next) => {
       }
 
       console.log("User successfully logged in:", user.username);
+      console.log("Session ID after login:", req.sessionID);
       
       const safeUser = {
         _id: user._id,

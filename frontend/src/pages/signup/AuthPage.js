@@ -93,7 +93,7 @@ const AuthPage = () => {
     const sessionUser = await fetchUser();
 
     if (!sessionUser) {
-      throw new Error("Login succeeded, but your session could not be verified. Please check if your browser blocks cookies or try a different browser.");
+      throw new Error("Login succeeded, but your session could not be verified.");
     }
 
     toast.dismiss(); // Clear any existing toasts

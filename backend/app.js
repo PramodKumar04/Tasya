@@ -24,20 +24,19 @@ const aiRouter = require('./routes/AI.js');
 
 console.log("Environment:", process.env.NODE_ENV || "development");
 
-const isProduction = process.env.NODE_ENV === "production" || process.env.RENDER === "true";
+const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "tasyasecret",
-  resave: true,
+  resave: false,
   saveUninitialized: false,
-  proxy: isProduction,
-  rolling: false,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: isProduction ? "none" : "lax",
     secure: isProduction,
-  }
+    sameSite: isProduction ? "none" : "lax"
+  },
+  proxy: isProduction
 };
 
 // Connect to MongoDB
