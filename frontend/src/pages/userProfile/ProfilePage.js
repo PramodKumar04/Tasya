@@ -22,8 +22,11 @@ export default function ProfilePage() {
   useEffect(() => {
     if (effectiveUsername) {
       fetchProfile();
+    } else if (paramUsername === undefined && currentUser === null) {
+      // If we are on /profile but not logged in, stop loading
+      setLoading(false);
     }
-  }, [effectiveUsername]);
+  }, [effectiveUsername, currentUser]);
 
   const fetchProfile = async () => {
     try {
@@ -89,8 +92,15 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) return <div className="text-center mt-5"><div className="spinner-border text-primary"></div></div>;
-  if (!profileUser) return <div className="text-center mt-5"><h3>User not found</h3></div>;
+  if (loading) return <div className="text-center mt-5 py-5"><div className="spinner-border text-primary"></div><p className="mt-2 text-muted">Loading profile...</p></div>;
+  if (!profileUser) return (
+    <div className="text-center mt-5 py-5 bg-white rounded-4 shadow-sm mx-3">
+      <span className="material-icons text-muted mb-3" style={{ fontSize: '48px' }}>person_off</span>
+      <h3>User not found</h3>
+      <p className="text-muted">The profile you are looking for doesn't exist or is unavailable.</p>
+      <a href="/" className="btn btn-primary rounded-pill px-4">Go Home</a>
+    </div>
+  );
 
   return (
     <div className="container mt-5 pb-5">

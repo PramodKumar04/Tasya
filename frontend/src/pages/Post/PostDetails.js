@@ -258,43 +258,51 @@ export default function PostDetails() {
             <div className="comments-list">
               {comments.length > 0 ? (
                 comments.map((comment) => (
-                  <div key={comment._id} className="d-flex gap-3 mb-4 p-3 bg-light rounded-4">
-                    <div className="material-icons text-secondary mt-1" style={{ fontSize: '32px' }}>account_circle</div>
-                    <div>
-                      <h6 className="mb-1 fw-bold">
-                        {comment.author?.username || comment.author?.fullName || "Anonymous"}
-                        <span className="text-muted ms-2 fw-normal" style={{ fontSize: '0.85rem' }}>
-                          {new Date(comment.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  <div key={comment._id} className="d-flex gap-3 mb-4 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+                    <div className="material-icons text-muted" style={{ fontSize: '32px' }}>account_circle</div>
+                    <div className="flex-grow-1">
+                      <div className="d-flex align-items-center gap-2 mb-1">
+                        <span className="fw-bold text-dark" style={{ fontSize: '0.9rem' }}>
+                          @{comment.author?.username || "anonymous"}
                         </span>
-                      </h6>
-                      <p className="mb-0 text-dark" style={{ whiteSpace: 'pre-wrap' }}>{comment.content}</p>
+                        <span className="text-muted" style={{ fontSize: '0.75rem' }}>
+                          {new Date(comment.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        </span>
+                      </div>
                       
-                      <div className="d-flex align-items-center gap-3 mt-2">
+                      <p className="mb-2 text-dark" style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>{comment.content}</p>
+                      
+                      <div className="d-flex align-items-center gap-3">
                         <button 
                           onClick={() => handleLikeComment(comment._id)}
-                          className="btn btn-sm d-flex align-items-center gap-1 p-0 border-0"
-                          style={{ color: comment.likedBy?.includes(user?._id) ? "#ff2d55" : "#8e8e93" }}
+                          className="btn btn-sm d-flex align-items-center gap-1 p-0 border-0 bg-transparent shadow-none"
+                          style={{ color: comment.likedBy?.includes(user?._id) ? "#065fd4" : "#606060" }}
                         >
-                          <span className="material-icons" style={{ fontSize: '18px' }}>
-                            {comment.likedBy?.includes(user?._id) ? "favorite" : "favorite_border"}
+                          <span className="material-icons" style={{ fontSize: '16px' }}>
+                            {comment.likedBy?.includes(user?._id) ? "thumb_up" : "thumb_up_off_alt"}
                           </span>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{comment.likes || 0}</span>
+                          <span style={{ fontSize: '0.75rem', fontWeight: '500' }}>{comment.likes || 0}</span>
                         </button>
+
+                        <button className="btn btn-sm p-0 border-0 bg-transparent text-dark shadow-none" style={{ fontSize: '0.75rem', fontWeight: '500', color: '#606060' }}>
+                          Reply
+                        </button>
+
+                        {user && (comment.author?._id === user._id || comment.author === user._id) && (
+                          <button 
+                            onClick={() => handleDeleteComment(comment._id)}
+                            className="btn btn-sm p-0 border-0 bg-transparent text-danger shadow-none ms-2"
+                            title="Delete"
+                          >
+                            <span className="material-icons" style={{ fontSize: '16px' }}>delete_outline</span>
+                          </button>
+                        )}
                       </div>
                     </div>
-                    {user && (comment.author?._id === user._id || comment.author === user._id) && (
-                      <button 
-                        onClick={() => handleDeleteComment(comment._id)}
-                        className="btn btn-sm text-danger ms-auto align-self-start"
-                        title="Delete Comment"
-                      >
-                        <span className="material-icons" style={{ fontSize: '18px' }}>delete</span>
-                      </button>
-                    )}
                   </div>
                 ))
               ) : (
-                <p className="text-muted text-center py-4 bg-light rounded-4">No comments yet. Be the first to share your thoughts!</p>
+                <p className="text-muted text-center py-4">No comments yet.</p>
               )}
             </div>
           </div>
