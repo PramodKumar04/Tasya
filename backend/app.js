@@ -35,9 +35,9 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://tasya-creativehub.onrender.com'],
   credentials: true
- }));
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session(sessionOptions));
