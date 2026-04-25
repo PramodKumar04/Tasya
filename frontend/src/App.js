@@ -21,7 +21,7 @@ import { AuthProvider } from './pages/signup/AuthContext';
 
 function App() {
   const location = useLocation();
-  const hideNavAndFooter = location.pathname === '/signup';
+  const hideNavAndFooter = location.pathname === '/signup' || location.pathname === '/login';
 
   return (
     <AuthProvider>
@@ -34,6 +34,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<SignUp />} />
         <Route path="/post/:id" element={<PostDetails />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/create" element={<AddNewPost />} />

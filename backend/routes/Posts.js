@@ -1,16 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const { postModel } = require("../models/Posts.js");
+const { userModel } = require("../models/User.js");
 const { cloudinary, upload } = require("../cloudConfig.js");
 
 // GET all posts
 router.get("/posts", async (req, res) => {
   try {
-    const posts = await postModel.find().populate("author", "fullName");
+    const posts = await postModel.find().populate("author", "username fullName profileImage");
     res.json(posts);
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ message: "Failed to load posts" });
+  }
+});
+
+// GET posts by username
+router.get("/posts/user/:username", async (req, res) => {
+  try {
+    const user = await userModel.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const posts = await postModel.find({ author: user._id })
+                                 .populate("author", "username fullName")
+                                 .sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    console.error("Error fetching user posts:", error);
+    res.status(500).json({ message: "Failed to load user posts" });
   }
 });
 
@@ -103,7 +120,7 @@ router.post("/posts", upload.fields([
 router.get("/post/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const post = await postModel.findById(id).populate("author", "fullName");
+    const post = await postModel.findById(id).populate("author", "username fullName profileImage");
     if (!post) return res.status(404).json({ error: "Post not found" });
     res.json(post);
   } catch (err) {
@@ -156,6 +173,50 @@ router.get("/posts/search",async(req,res)=>{
     res.status(200).json(results);
   }catch(error){
     res.status(500).json({message:"Search failed"});
+  }
+});
+
+const { commentModel } = require("../models/Comments.js");
+
+// POST a comment on a post
+router.post("/post/:id/comment", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "You must be logged in to comment." });
+  }
+
+  const { id } = req.params;
+  const { content } = req.body;
+
+  try {
+    const newComment = new commentModel({
+      post: id,
+      author: req.user._id,
+      content
+    });
+
+    await newComment.save();
+    
+    // Populate author before returning
+    await newComment.populate("author", "username fullName");
+    
+    res.status(201).json({ message: "Comment added", comment: newComment });
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).json({ message: "Failed to add comment", error: error.message });
+  }
+});
+
+// GET comments for a post
+router.get("/post/:id/comments", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const comments = await commentModel.find({ post: id })
+      .populate("author", "username fullName")
+      .sort({ createdAt: -1 }); // Newest first
+    res.json(comments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ error: "Could not fetch comments" });
   }
 });
 

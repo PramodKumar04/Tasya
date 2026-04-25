@@ -10,6 +10,12 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
   const [likes, setLikes] = useState(post.likes || 0);
   const [liked, setLiked] = useState(post.likedBy?.includes(currentUserId) || false);
 
+  const stripHtml = (html) => {
+    if (!html) return '';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
+
   const handleClick = async () => {
     try {
       const res = await axios.patch(
@@ -92,7 +98,7 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
         </Link>
 
         <p className="glass-text">
-          {content}
+          {stripHtml(content)}
         </p>
 
         <div className="glass-footer">

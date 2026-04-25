@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../signup/AuthContext";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 export default function AddNewPost() {
   const { user } = useAuth();
@@ -22,6 +24,23 @@ export default function AddNewPost() {
   const [fileInp, setFileInp] = useState({ image: null, video: null });
   const [uploading, setUploading] = useState(false);
   const [improving, setImproving] = useState(false);
+
+  const modules = useMemo(() => ({
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      ['clean']
+    ],
+  }), []);
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'video'
+  ];
 
   useEffect(() => {
     const forms = document.querySelectorAll(".needs-validation");
@@ -97,6 +116,7 @@ export default function AddNewPost() {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
         timeout: 300000, // 5 minutes timeout for large files
       });
 
@@ -168,16 +188,14 @@ export default function AddNewPost() {
               Content
             </label>
             <div className="position-relative">
-              <textarea
-                className="form-control"
-                width="100%"
-                rows={10}
-                name="content"
-                id="content"
+              <ReactQuill
+                theme="snow"
                 value={postData.content}
-                onChange={handleChange}
+                onChange={(content) => setPostData((curr) => ({ ...curr, content }))}
+                modules={modules}
+                formats={formats}
                 placeholder="Write your content..."
-                required
+                style={{ height: '300px', marginBottom: '50px' }}
               />
               <button
                 type="button"
