@@ -58,7 +58,7 @@ const AuthPage = () => {
   event.preventDefault();
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/users/signup",
+      "https://tasya.onrender.com/api/users/signup",
       signupForm,
       { withCredentials: true }
     );
@@ -82,7 +82,7 @@ const AuthPage = () => {
   event.preventDefault();
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/users/login",
+      "https://tasya.onrender.com/api/users/login",
       loginForm,
       { withCredentials: true }
     );

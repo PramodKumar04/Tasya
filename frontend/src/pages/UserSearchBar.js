@@ -38,7 +38,7 @@ export default function UserSearchBar() {
   const searchUsers = async (searchQuery) => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/search?q=${searchQuery}`);
+      const res = await axios.get(`https://tasya.onrender.com/api/users/search?q=${searchQuery}`);
       setResults(res.data);
       setIsOpen(true);
     } catch (err) {

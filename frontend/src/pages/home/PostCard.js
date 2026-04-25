@@ -19,7 +19,7 @@ export default function PostCard({ post, currentUserId = "68735376fb9864bffdb5f8
   const handleClick = async () => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/post/${_id}/like`,
+        `https://tasya.onrender.com/api/post/${_id}/like`,
         {
           userId: currentUserId,
         }

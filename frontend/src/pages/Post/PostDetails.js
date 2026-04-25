@@ -15,7 +15,7 @@ export default function PostDetails() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/posts")
+      .get("https://tasya.onrender.com/api/posts")
       .then((res) => {
         console.log("Posts fetched successfully:", res.data);
         setPosts(res.data);
@@ -27,7 +27,7 @@ export default function PostDetails() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/post/${id}`)
+      .get(`https://tasya.onrender.com/api/post/${id}`)
       .then((res) => {
         console.log("Fetched post:", res.data);
         setPost(res.data);
@@ -35,7 +35,7 @@ export default function PostDetails() {
       .catch((err) => console.error("Error fetching post:", err));
 
     axios
-      .get(`http://localhost:5000/api/post/${id}/comments`)
+      .get(`https://tasya.onrender.com/api/post/${id}/comments`)
       .then((res) => {
         setComments(res.data);
       })
@@ -48,7 +48,7 @@ export default function PostDetails() {
     
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/post/${id}/comment`,
+        `https://tasya.onrender.com/api/post/${id}/comment`,
         { content: newComment },
         { withCredentials: true } // Assuming auth uses cookies/sessions
       );

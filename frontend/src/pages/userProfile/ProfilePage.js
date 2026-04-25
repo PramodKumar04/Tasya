@@ -28,7 +28,7 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/users/profile/${effectiveUsername}`);
+      const res = await axios.get(`https://tasya.onrender.com/api/users/profile/${effectiveUsername}`);
       setProfileUser(res.data);
     } catch (err) {
       console.error("Error fetching profile:", err);
@@ -47,7 +47,7 @@ export default function ProfilePage() {
 
     try {
       setUploading(true);
-      await axios.patch("http://localhost:5000/api/users/update", formData, {
+      await axios.patch("https://tasya.onrender.com/api/users/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true
       });
@@ -63,7 +63,7 @@ export default function ProfilePage() {
 
   const handleBioSave = async () => {
     try {
-      await axios.patch("http://localhost:5000/api/users/update", { bio: newBio }, {
+      await axios.patch("https://tasya.onrender.com/api/users/update", { bio: newBio }, {
         withCredentials: true
       });
       toast.success("Bio updated!");
@@ -80,7 +80,7 @@ export default function ProfilePage() {
     try {
       const isFollowing = profileUser.followers.some(f => String(f._id) === String(currentUser._id));
       const endpoint = isFollowing ? 'unfollow' : 'follow';
-      await axios.post(`http://localhost:5000/api/users/${endpoint}/${profileUser._id}`, {}, { withCredentials: true });
+      await axios.post(`https://tasya.onrender.com/api/users/${endpoint}/${profileUser._id}`, {}, { withCredentials: true });
       toast.success(isFollowing ? "Unfollowed" : "Following");
       fetchProfile();
     } catch (err) {

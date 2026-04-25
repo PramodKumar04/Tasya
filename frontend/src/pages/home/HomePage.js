@@ -18,7 +18,7 @@ export default function HomePage() {
   const fetchAllPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/posts");
+      const res = await axios.get("https://tasya.onrender.com/api/posts");
       setPosts(res.data);
     } catch (error) {
       console.error("Failed to fetch posts:", error);
@@ -38,7 +38,7 @@ export default function HomePage() {
     }
 
     const res = await axios.get(
-      `http://localhost:5000/api/posts/search?q=${query}`
+      `https://tasya.onrender.com/api/posts/search?q=${query}`
     );
     setPosts(res.data);
   } catch (error) {

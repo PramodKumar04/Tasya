@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/session-info", {
+      const res = await axios.get("https://tasya.onrender.com/api/users/session-info", {
         withCredentials: true,
       });
       setUser(res.data.user);

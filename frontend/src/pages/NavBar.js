@@ -22,7 +22,7 @@ function NavBar() {
 
   const handleLogout = async () => {
   try {
-    await axios.get("http://localhost:5000/api/users/logout", {
+    await axios.get("https://tasya.onrender.com/api/users/logout", {
       withCredentials: true,
     });
     setUser(null);

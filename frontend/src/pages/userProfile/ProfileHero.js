@@ -21,7 +21,7 @@ export default function ProfileHero() {
 
     const fetchUserPosts = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/posts/user/${effectiveUsername}`);
+            const res = await axios.get(`https://tasya.onrender.com/api/posts/user/${effectiveUsername}`);
             setUserPosts(res.data);
         } catch (error) {
             console.error("Failed to fetch user posts:", error);

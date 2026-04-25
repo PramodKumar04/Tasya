@@ -6,7 +6,7 @@ export default function Hero() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/posts")
+    axios.get("https://tasya.onrender.com/api/posts")
       .then(res => {
         console.log("Posts fetched successfully:", res.data);
         setPosts(res.data);

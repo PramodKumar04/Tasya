@@ -112,7 +112,7 @@ export default function AddNewPost() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/posts", formData, {
+      const response = await axios.post("https://tasya.onrender.com/api/posts", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -141,7 +141,7 @@ export default function AddNewPost() {
     if (!postData.content) return alert("Please write something first");
     setImproving(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/improve", {
+      const res = await axios.post("https://tasya.onrender.com/api/ai/improve", {
         content: postData.content,
         title: postData.title
       });
