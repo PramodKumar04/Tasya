@@ -26,24 +26,17 @@ console.log("Environment:", process.env.NODE_ENV || "development");
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "tasyasecret",
-  resave: true, // Recommended for MemoryStore to keep sessions alive
+  resave: false,
   saveUninitialized: false,
   proxy: true,
-  rolling: true, // Force cookie to be set on every response
+  rolling: true,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: "none",
-    secure: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
   }
 };
-
-// Adjust for local development
-if (process.env.NODE_ENV !== "production") {
-  sessionOptions.cookie.secure = false;
-  sessionOptions.cookie.sameSite = "lax";
-  sessionOptions.proxy = false;
-}
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -69,15 +62,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
-  // Relax cookie security if request comes from localhost
-  const origin = req.get('origin');
-  if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
-    if (req.session && req.session.cookie) {
-      req.session.cookie.secure = false;
-      req.session.cookie.sameSite = 'lax';
-    }
-  }
-
   if (req.url.startsWith('/api')) {
     console.log(`${req.method} ${req.url} - Auth: ${req.isAuthenticated()} - User: ${req.user ? req.user.username : 'none'}`);
     if (req.headers.cookie) console.log("Cookies present:", req.headers.cookie.substring(0, 30) + "...");

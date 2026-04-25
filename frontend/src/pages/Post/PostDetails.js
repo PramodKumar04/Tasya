@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PostCard from "../home/PostCard";
 import DOMPurify from "dompurify";
 import { useAuth } from "../signup/AuthContext";
+import { toast } from "react-toastify";
 import api from "../../api";
 
 export default function PostDetails() {
@@ -50,9 +51,10 @@ export default function PostDetails() {
       const res = await api.post(`/post/${id}/comment`, { content: newComment });
       setComments([res.data.comment, ...comments]);
       setNewComment("");
+      toast.success("Comment posted!");
     } catch (err) {
       console.error("Error adding comment:", err);
-      alert("Failed to add comment. Please make sure you are logged in.");
+      toast.error(err.response?.data?.message || "Failed to add comment. Please make sure you are logged in.");
     }
   };
 
@@ -62,22 +64,25 @@ export default function PostDetails() {
     try {
       await api.delete(`/comment/${commentId}`);
       setComments(comments.filter(c => c._id !== commentId));
+      toast.success("Comment deleted");
     } catch (err) {
       console.error("Error deleting comment:", err);
-      alert(err.response?.data?.message || "Failed to delete comment");
+      toast.error(err.response?.data?.message || "Failed to delete comment");
     }
   };
 
   const handleLikeComment = async (commentId) => {
-    if (!user) return alert("Please log in to like comments");
+    if (!user) return toast.info("Please log in to like comments");
     
     try {
       const res = await api.patch(`/comment/${commentId}/like`, {});
       setComments(comments.map(c => 
         c._id === commentId ? { ...c, likes: res.data.likes, likedBy: res.data.liked ? [...(c.likedBy || []), user._id] : (c.likedBy || []).filter(id => id !== user._id) } : c
       ));
+      toast.success(res.data.liked ? "Comment liked!" : "Comment unliked");
     } catch (err) {
       console.error("Error liking comment:", err);
+      toast.error("Failed to like comment");
     }
   };
 
@@ -128,6 +133,7 @@ export default function PostDetails() {
 
     return null;
   };
+
   return (
     <div
       className="container"

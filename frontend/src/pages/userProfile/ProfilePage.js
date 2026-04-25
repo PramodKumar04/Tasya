@@ -76,16 +76,18 @@ export default function ProfilePage() {
   };
 
   const handleFollow = async () => {
-    if (!currentUser) return toast.info("Please login to follow");
+    if (!currentUser) return toast.info("Please login to follow creators");
     try {
       const isFollowing = profileUser.followers.some(f => String(f._id) === String(currentUser._id));
       const endpoint = isFollowing ? 'unfollow' : 'follow';
       await api.post(`/users/${endpoint}/${profileUser._id}`, {});
-      toast.success(isFollowing ? "Unfollowed" : "Following");
+      
+      const newIsFollowing = !isFollowing;
+      toast.success(newIsFollowing ? `Now following ${profileUser.username}` : `Unfollowed ${profileUser.username}`);
       fetchProfile();
     } catch (err) {
       console.error("Follow error:", err.response?.data || err.message);
-      toast.error(err.response?.data?.message || "Action failed");
+      toast.error(err.response?.data?.message || "Action failed. Please try again.");
     }
   };
 

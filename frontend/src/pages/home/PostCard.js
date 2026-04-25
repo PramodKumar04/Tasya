@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuth } from "../signup/AuthContext";
 import "./PostCard.css";
 import api from "../../api";
@@ -20,12 +21,18 @@ export default function PostCard({ post }) {
   };
 
   const handleClick = async () => {
+    if (!user) {
+      toast.info("Please login to like posts");
+      return;
+    }
     try {
       const res = await api.patch(`/post/${_id}/like`, {});
       setLikes(res.data.likes);
       setLiked(res.data.liked);
+      toast.success(res.data.liked ? "Post liked!" : "Post unliked");
     } catch (err) {
       console.error("Error liking/unliking post", err);
+      toast.error(err.response?.data?.message || "Failed to process like");
     }
   };
 

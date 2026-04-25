@@ -60,12 +60,16 @@ const AuthPage = () => {
   setLoading(true);
   try {
     const response = await api.post("/users/signup", signupForm);
+    const sessionUser = await fetchUser();
+
+    if (!sessionUser) {
+      throw new Error("Signup succeeded, but your login session was not created.");
+    }
 
     toast.dismiss(); // Clear any existing toasts
     toast.success(response.data.message || "Signup successful!");
 
-    const sessionUser = await fetchUser();
-    setUser(sessionUser || response.data.user || null);
+    setUser(sessionUser);
 
     navigate("/home");
 
@@ -86,19 +90,23 @@ const AuthPage = () => {
   setLoading(true);
   try {
     const response = await api.post("/users/login", loginForm);
+    const sessionUser = await fetchUser();
+
+    if (!sessionUser) {
+      throw new Error("Login succeeded, but your session cookie was not saved.");
+    }
 
     toast.dismiss(); // Clear any existing toasts
     toast.success(response.data.message || "Login successful!");
 
-    const sessionUser = await fetchUser();
-    setUser(sessionUser || response.data.user || null);
+    setUser(sessionUser);
 
     setLoginForm({ username: "", password: "" });
     navigate("/home");
   } catch (err) {
     console.error("Failed to login:", err);
     toast.dismiss();
-    toast.error(err.response?.data?.message || "Login failed");
+    toast.error(err.response?.data?.message || err.message || "Login failed");
   } finally {
     setLoading(false);
   }
