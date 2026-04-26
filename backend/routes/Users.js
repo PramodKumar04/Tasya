@@ -101,8 +101,6 @@ router.post("/login", async (req, res, next) => {
       }
 
       console.log("User successfully logged in:", user.username);
-      console.log("Session ID after login:", req.sessionID);
-      console.log("Session Cookie config:", req.session.cookie);
       
       const safeUser = {
         _id: user._id,
@@ -119,7 +117,6 @@ router.post("/login", async (req, res, next) => {
           console.error("Session save error during login:", err);
           return res.status(500).json({ message: "Login successful but session failed" });
         }
-        console.log("Session successfully saved for:", user.username);
         return res.status(200).json({ message: "Login successful!", user: safeUser });
       });
     });

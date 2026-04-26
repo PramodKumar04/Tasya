@@ -5,12 +5,9 @@ require("dotenv").config({ override: true });
 const express = require('express');
 const app = express();
 
-// Trust proxy for session cookies in production (Render, Heroku, etc.)
-app.set('trust proxy', 1);
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
 const passport = require("passport");
 const LocalStrategy= require("passport-local");
 
@@ -25,27 +22,16 @@ const aiRouter = require('./routes/AI.js');
 
 console.log("Environment:", process.env.NODE_ENV || "development");
 
-const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
-const frontendUrl = 'https://tasya-creativehub.onrender.com';
-
 const sessionOptions = {
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI,
-    crypto: {
-      secret: process.env.SESSION_SECRET || "tasyasecret"
-    },
-    touchAfter: 24 * 3600 // time period in seconds
-  }),
   secret: process.env.SESSION_SECRET || "tasyasecret",
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax"
-  },
-  proxy: isProduction
+    secure: false, // Set to false for localhost (HTTP)
+    sameSite: "lax"
+  }
 };
 
 // Connect to MongoDB
@@ -56,12 +42,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Middlewares
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    frontendUrl,
-    frontendUrl.replace(/\/$/, "") // Ensure no trailing slash
-  ],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
