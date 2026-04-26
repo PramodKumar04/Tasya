@@ -10,6 +10,7 @@ app.set('trust proxy', 1);
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
 const passport = require("passport");
 const LocalStrategy= require("passport-local");
 
@@ -25,9 +26,16 @@ const aiRouter = require('./routes/AI.js');
 console.log("Environment:", process.env.NODE_ENV || "development");
 
 const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
-const frontendUrl = process.env.FRONTEND_URL || 'https://tasya-creativehub.onrender.com';
+const frontendUrl = 'https://tasya-creativehub.onrender.com';
 
 const sessionOptions = {
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    crypto: {
+      secret: process.env.SESSION_SECRET || "tasyasecret"
+    },
+    touchAfter: 24 * 3600 // time period in seconds
+  }),
   secret: process.env.SESSION_SECRET || "tasyasecret",
   resave: false,
   saveUninitialized: false,
