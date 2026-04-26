@@ -25,6 +25,7 @@ const aiRouter = require('./routes/AI.js');
 console.log("Environment:", process.env.NODE_ENV || "development");
 
 const isProduction = process.env.NODE_ENV === "production" || !!process.env.RENDER;
+const frontendUrl = process.env.FRONTEND_URL || 'https://tasya-creativehub.onrender.com';
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "tasyasecret",
@@ -50,7 +51,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://tasya-creativehub.onrender.com'
+    frontendUrl,
+    frontendUrl.replace(/\/$/, "") // Ensure no trailing slash
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
@@ -86,7 +88,7 @@ app.use('/api/ai', aiRouter);
 // It's now handled in the userRouter
 
 // Start server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
